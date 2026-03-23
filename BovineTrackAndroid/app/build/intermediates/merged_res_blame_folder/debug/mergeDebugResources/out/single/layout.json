@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_onboarding.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_onboarding.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/item_simple_line.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/item_simple_line.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_compatibility_check.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_compatibility_check.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_geofence_editor.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_geofence_editor.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_alerts.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_alerts.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_role_selection.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_role_selection.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_incompatible.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_incompatible.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_settings.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_client_log.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_client_log.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_live_map.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_live_map.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_server_dashboard.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_server_dashboard.xml"
+    },
+    {
+        "merged": "com.bovinetrack.app-mergeDebugResources-44:/layout/activity_client_dashboard.xml",
+        "source": "com.bovinetrack.app-main-47:/layout/activity_client_dashboard.xml"
+    }
+]

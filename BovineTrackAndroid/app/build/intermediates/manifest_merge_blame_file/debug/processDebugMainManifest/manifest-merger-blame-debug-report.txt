@@ -1,0 +1,481 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.bovinetrack.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:4:5-67
+11-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:5:5-79
+12-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:5:22-76
+13    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+13-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:6:5-79
+13-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:6:22-76
+14    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+14-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:7:5-81
+14-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:7:22-78
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+15-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:8:5-77
+15-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:8:22-74
+16    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+16-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:9:5-86
+16-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:9:22-83
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:10:5-77
+17-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:10:22-74
+18    <uses-permission android:name="android.permission.WAKE_LOCK" />
+18-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:23:5-68
+18-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:23:22-65
+19    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+19-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:25:5-81
+19-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:25:22-78
+20
+21    <uses-feature
+21-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:26:5-28:35
+22        android:glEsVersion="0x00020000"
+22-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:27:9-41
+23        android:required="true" />
+23-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:28:9-32
+24
+25    <queries>
+25-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:30:5-34:15
+26
+27        <!-- Needs to be explicitly declared on Android R+ -->
+28        <package android:name="com.google.android.apps.maps" />
+28-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:33:9-64
+28-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:33:18-61
+29    </queries>
+30
+31    <permission
+31-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+32        android:name="com.bovinetrack.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+32-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+33        android:protectionLevel="signature" />
+33-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+34
+35    <uses-permission android:name="com.bovinetrack.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+35-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+35-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+36
+37    <application
+37-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:12:5-49:19
+38        android:name="com.bovinetrack.app.BovineTrackApp"
+38-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:13:9-39
+39        android:allowBackup="true"
+39-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:14:9-35
+40        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+40-->[androidx.core:core:1.13.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+41        android:debuggable="true"
+42        android:extractNativeLibs="false"
+43        android:icon="@android:drawable/sym_def_app_icon"
+43-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:15:9-58
+44        android:label="BovineTrack"
+44-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:16:9-36
+45        android:roundIcon="@android:drawable/sym_def_app_icon"
+45-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:17:9-63
+46        android:supportsRtl="true"
+46-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:18:9-35
+47        android:theme="@style/Theme.BovineTrack" >
+47-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:19:9-49
+48        <meta-data
+48-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:21:9-23:49
+49            android:name="com.google.android.geo.API_KEY"
+49-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:22:13-58
+50            android:value="YOUR_MAPS_API_KEY" />
+50-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:23:13-46
+51
+52        <service
+52-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:25:9-28:56
+53            android:name="com.bovinetrack.app.service.TrackingService"
+53-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:26:13-52
+54            android:exported="false"
+54-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:27:13-37
+55            android:foregroundServiceType="location" />
+55-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:28:13-53
+56
+57        <activity android:name="com.bovinetrack.app.ui.settings.SettingsActivity" />
+57-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:30:9-66
+57-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:30:19-63
+58        <activity android:name="com.bovinetrack.app.ui.server.LiveMapActivity" />
+58-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:31:9-63
+58-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:31:19-60
+59        <activity android:name="com.bovinetrack.app.ui.server.GeofenceEditorActivity" />
+59-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:32:9-70
+59-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:32:19-67
+60        <activity android:name="com.bovinetrack.app.ui.server.AlertsActivity" />
+60-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:33:9-62
+60-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:33:19-59
+61        <activity android:name="com.bovinetrack.app.ui.server.ServerDashboardActivity" />
+61-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:34:9-71
+61-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:34:19-68
+62        <activity android:name="com.bovinetrack.app.ui.client.ClientActivityLogActivity" />
+62-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:35:9-73
+62-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:35:19-70
+63        <activity android:name="com.bovinetrack.app.ui.client.ClientDashboardActivity" />
+63-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:36:9-71
+63-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:36:19-68
+64        <activity android:name="com.bovinetrack.app.ui.RoleSelectionActivity" />
+64-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:37:9-62
+64-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:37:19-59
+65        <activity android:name="com.bovinetrack.app.ui.OnboardingActivity" />
+65-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:38:9-59
+65-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:38:19-56
+66        <activity android:name="com.bovinetrack.app.ui.IncompatibleActivity" />
+66-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:39:9-61
+66-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:39:19-58
+67        <activity
+67-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:40:9-48:20
+68            android:name="com.bovinetrack.app.ui.CompatibilityCheckActivity"
+68-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:41:13-58
+69            android:exported="true" >
+69-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:42:13-36
+70            <intent-filter>
+70-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:43:13-47:29
+71                <action android:name="android.intent.action.MAIN" />
+71-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:44:17-69
+71-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:44:25-66
+72
+73                <category android:name="android.intent.category.LAUNCHER" />
+73-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:46:17-77
+73-->F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\AndroidManifest.xml:46:27-74
+74            </intent-filter>
+75        </activity>
+76
+77        <provider
+77-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:29:9-37:20
+78            android:name="androidx.startup.InitializationProvider"
+78-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:30:13-67
+79            android:authorities="com.bovinetrack.app.androidx-startup"
+79-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:31:13-68
+80            android:exported="false" >
+80-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:32:13-37
+81            <meta-data
+81-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:34:13-36:52
+82                android:name="androidx.work.WorkManagerInitializer"
+82-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:35:17-68
+83                android:value="androidx.startup" />
+83-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:36:17-49
+84            <meta-data
+84-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4cfe3b26ced14ba50c99ab70f2d2d1e7\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+85                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+85-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4cfe3b26ced14ba50c99ab70f2d2d1e7\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+86                android:value="androidx.startup" />
+86-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4cfe3b26ced14ba50c99ab70f2d2d1e7\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+87            <meta-data
+87-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9a2632e95c71903b5a4bc3900e6c5118\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:29:13-31:52
+88                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+88-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9a2632e95c71903b5a4bc3900e6c5118\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:30:17-78
+89                android:value="androidx.startup" />
+89-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9a2632e95c71903b5a4bc3900e6c5118\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:31:17-49
+90            <meta-data
+90-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+91                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+91-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+92                android:value="androidx.startup" />
+92-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+93        </provider>
+94
+95        <service
+95-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:39:9-45:35
+96            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+96-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:40:13-88
+97            android:directBootAware="false"
+97-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:41:13-44
+98            android:enabled="@bool/enable_system_alarm_service_default"
+98-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:42:13-72
+99            android:exported="false" />
+99-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:43:13-37
+100        <service
+100-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:46:9-52:35
+101            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+101-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:47:13-84
+102            android:directBootAware="false"
+102-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:48:13-44
+103            android:enabled="@bool/enable_system_job_service_default"
+103-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:49:13-70
+104            android:exported="true"
+104-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:50:13-36
+105            android:permission="android.permission.BIND_JOB_SERVICE" />
+105-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:51:13-69
+106        <service
+106-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:53:9-59:35
+107            android:name="androidx.work.impl.foreground.SystemForegroundService"
+107-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:54:13-81
+108            android:directBootAware="false"
+108-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:55:13-44
+109            android:enabled="@bool/enable_system_foreground_service_default"
+109-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:56:13-77
+110            android:exported="false" />
+110-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:57:13-37
+111
+112        <receiver
+112-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:61:9-66:35
+113            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+113-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:62:13-88
+114            android:directBootAware="false"
+114-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:63:13-44
+115            android:enabled="true"
+115-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:64:13-35
+116            android:exported="false" />
+116-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:65:13-37
+117        <receiver
+117-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:67:9-77:20
+118            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+118-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:68:13-106
+119            android:directBootAware="false"
+119-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:69:13-44
+120            android:enabled="false"
+120-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:70:13-36
+121            android:exported="false" >
+121-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:71:13-37
+122            <intent-filter>
+122-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:73:13-76:29
+123                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+123-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:17-87
+123-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:25-84
+124                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+124-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:17-90
+124-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:25-87
+125            </intent-filter>
+126        </receiver>
+127        <receiver
+127-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:78:9-88:20
+128            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+128-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:79:13-104
+129            android:directBootAware="false"
+129-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:80:13-44
+130            android:enabled="false"
+130-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:81:13-36
+131            android:exported="false" >
+131-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:82:13-37
+132            <intent-filter>
+132-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:84:13-87:29
+133                <action android:name="android.intent.action.BATTERY_OKAY" />
+133-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:17-77
+133-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:25-74
+134                <action android:name="android.intent.action.BATTERY_LOW" />
+134-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:17-76
+134-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:25-73
+135            </intent-filter>
+136        </receiver>
+137        <receiver
+137-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:89:9-99:20
+138            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+138-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:90:13-104
+139            android:directBootAware="false"
+139-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:91:13-44
+140            android:enabled="false"
+140-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:92:13-36
+141            android:exported="false" >
+141-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:93:13-37
+142            <intent-filter>
+142-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:95:13-98:29
+143                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+143-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:17-83
+143-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:25-80
+144                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+144-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:17-82
+144-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:25-79
+145            </intent-filter>
+146        </receiver>
+147        <receiver
+147-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:100:9-109:20
+148            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+148-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:101:13-103
+149            android:directBootAware="false"
+149-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:102:13-44
+150            android:enabled="false"
+150-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:103:13-36
+151            android:exported="false" >
+151-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:104:13-37
+152            <intent-filter>
+152-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:106:13-108:29
+153                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+153-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:17-79
+153-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:25-76
+154            </intent-filter>
+155        </receiver>
+156        <receiver
+156-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:110:9-121:20
+157            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+157-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:111:13-88
+158            android:directBootAware="false"
+158-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:112:13-44
+159            android:enabled="false"
+159-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:113:13-36
+160            android:exported="false" >
+160-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:114:13-37
+161            <intent-filter>
+161-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:116:13-120:29
+162                <action android:name="android.intent.action.BOOT_COMPLETED" />
+162-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:17-79
+162-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:25-76
+163                <action android:name="android.intent.action.TIME_SET" />
+163-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:17-73
+163-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:25-70
+164                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+164-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:17-81
+164-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:25-78
+165            </intent-filter>
+166        </receiver>
+167        <receiver
+167-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:122:9-131:20
+168            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+168-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:123:13-99
+169            android:directBootAware="false"
+169-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:124:13-44
+170            android:enabled="@bool/enable_system_alarm_service_default"
+170-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:125:13-72
+171            android:exported="false" >
+171-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:126:13-37
+172            <intent-filter>
+172-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:128:13-130:29
+173                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+173-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:17-98
+173-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:25-95
+174            </intent-filter>
+175        </receiver>
+176        <receiver
+176-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:132:9-142:20
+177            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+177-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:133:13-78
+178            android:directBootAware="false"
+178-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:134:13-44
+179            android:enabled="true"
+179-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:135:13-35
+180            android:exported="true"
+180-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:136:13-36
+181            android:permission="android.permission.DUMP" >
+181-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:137:13-57
+182            <intent-filter>
+182-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:139:13-141:29
+183                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+183-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:17-88
+183-->[androidx.work:work-runtime:2.10.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:25-85
+184            </intent-filter>
+185        </receiver> <!-- Needs to be explicitly declared on P+ -->
+186        <uses-library
+186-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:39:9-41:40
+187            android:name="org.apache.http.legacy"
+187-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:40:13-50
+188            android:required="false" />
+188-->[com.google.android.gms:play-services-maps:19.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\AndroidManifest.xml:41:13-37
+189
+190        <service
+190-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:26:9-35:19
+191            android:name="com.google.firebase.components.ComponentDiscoveryService"
+191-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:27:13-84
+192            android:directBootAware="true"
+192-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
+193            android:exported="false" >
+193-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:28:13-37
+194            <meta-data
+194-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:29:13-31:85
+195                android:name="com.google.firebase.components:com.google.firebase.database.FirebaseDatabaseKtxRegistrar"
+195-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:30:17-120
+196                android:value="com.google.firebase.components.ComponentRegistrar" />
+196-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:31:17-82
+197            <meta-data
+197-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:32:13-34:85
+198                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
+198-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:33:17-109
+199                android:value="com.google.firebase.components.ComponentRegistrar" />
+199-->[com.google.firebase:firebase-database:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\72352668f0563efe25c4540b58eb502a\transformed\firebase-database-21.0.0\AndroidManifest.xml:34:17-82
+200            <meta-data
+200-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\dcabd5130c2d4ac8a44dc7d0e814f946\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+201                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+201-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\dcabd5130c2d4ac8a44dc7d0e814f946\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+202                android:value="com.google.firebase.components.ComponentRegistrar" />
+202-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\dcabd5130c2d4ac8a44dc7d0e814f946\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+203            <meta-data
+203-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+204                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+204-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+205                android:value="com.google.firebase.components.ComponentRegistrar" />
+205-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+206        </service>
+207
+208        <activity
+208-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5aaf36544a6b80779cade60e5aafe10d\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+209            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+209-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5aaf36544a6b80779cade60e5aafe10d\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+210            android:exported="false"
+210-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5aaf36544a6b80779cade60e5aafe10d\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+211            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+211-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5aaf36544a6b80779cade60e5aafe10d\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+212
+213        <provider
+213-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+214            android:name="com.google.firebase.provider.FirebaseInitProvider"
+214-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+215            android:authorities="com.bovinetrack.app.firebaseinitprovider"
+215-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+216            android:directBootAware="true"
+216-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+217            android:exported="false"
+217-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+218            android:initOrder="100" />
+218-->[com.google.firebase:firebase-common:21.0.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+219
+220        <service
+220-->[androidx.room:room-runtime:2.6.1] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\f3b13b029718e248596a3f904e5672c6\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+221            android:name="androidx.room.MultiInstanceInvalidationService"
+221-->[androidx.room:room-runtime:2.6.1] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\f3b13b029718e248596a3f904e5672c6\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+222            android:directBootAware="true"
+222-->[androidx.room:room-runtime:2.6.1] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\f3b13b029718e248596a3f904e5672c6\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+223            android:exported="false" />
+223-->[androidx.room:room-runtime:2.6.1] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\f3b13b029718e248596a3f904e5672c6\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+224
+225        <meta-data
+225-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\1f5db015c5dfdab343dc94b6b71749d7\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
+226            android:name="com.google.android.gms.version"
+226-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\1f5db015c5dfdab343dc94b6b71749d7\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
+227            android:value="@integer/google_play_services_version" />
+227-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\1f5db015c5dfdab343dc94b6b71749d7\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
+228
+229        <receiver
+229-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+230            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+230-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+231            android:directBootAware="false"
+231-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+232            android:enabled="true"
+232-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+233            android:exported="true"
+233-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+234            android:permission="android.permission.DUMP" >
+234-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+235            <intent-filter>
+235-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+236                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+236-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+236-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+237            </intent-filter>
+238            <intent-filter>
+238-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+239                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+239-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+239-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+240            </intent-filter>
+241            <intent-filter>
+241-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+242                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+242-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+242-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+243            </intent-filter>
+244            <intent-filter>
+244-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+245                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+245-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+245-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+246            </intent-filter>
+247        </receiver>
+248    </application>
+249
+250</manifest>

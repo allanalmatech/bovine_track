@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bt_alert">#BA1A1A</color>
+    <color name="bt_alert_bg">#FFDAD6</color>
+    <color name="bt_background">#F5FCED</color>
+    <color name="bt_muted">#526772</color>
+    <color name="bt_on_surface">#171D14</color>
+    <color name="bt_primary">#00450D</color>
+    <color name="bt_primary_container">#065F18</color>
+    <color name="bt_primary_fixed">#A3F69C</color>
+    <color name="bt_surface">#EFF6E7</color>
+    <color name="bt_surface_alt">#E9F0E1</color>
+    <string name="app_name">BovineTrack</string>
+    <string name="client_role">Client (Tracked Device)</string>
+    <string name="compatibility_title">Initializing System</string>
+    <string name="incompatible_title">Incompatible Device</string>
+    <string name="notif_channel_alerts">Geofence Alerts</string>
+    <string name="notif_channel_tracking">Tracking Service</string>
+    <string name="server_role">Server (Tracker Monitor)</string>
+    <style name="Theme.BovineTrack" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/bt_primary</item>
+        <item name="colorPrimaryContainer">@color/bt_primary_container</item>
+        <item name="android:statusBarColor">@color/bt_background</item>
+        <item name="android:windowBackground">@color/bt_background</item>
+        <item name="android:navigationBarColor">@color/bt_background</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColorPrimary">@color/bt_on_surface</item>
+        <item name="android:textColorSecondary">@color/bt_muted</item>
+    </style>
+</resources>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BovineTrack | Tracking Activity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00450d",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#86d881",
+                        "primary-fixed-dim": "#88d982",
+                        "surface-container": "#e9f0e1",
+                        "outline": "#717a6d",
+                        "tertiary-container": "#883454",
+                        "inverse-surface": "#2c3228",
+                        "primary-container": "#065f18",
+                        "on-secondary-container": "#526772",
+                        "error": "#ba1a1a",
+                        "surface": "#f5fced",
+                        "tertiary": "#6b1d3d",
+                        "surface-bright": "#f5fced",
+                        "on-tertiary-container": "#ffaec6",
+                        "on-surface": "#171d14",
+                        "outline-variant": "#c0c9bb",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#cfe6f2",
+                        "background": "#f5fced",
+                        "tertiary-fixed-dim": "#ffb1c8",
+                        "surface-container-highest": "#dee5d6",
+                        "surface-dim": "#d5dcce",
+                        "secondary-container": "#cfe6f2",
+                        "on-primary-fixed": "#002204",
+                        "on-primary-fixed-variant": "#005312",
+                        "on-background": "#171d14",
+                        "primary-fixed": "#a3f69c",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#88d982",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e3ebdc",
+                        "on-tertiary-fixed-variant": "#7a2949",
+                        "surface-variant": "#dee5d6",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#41493e",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#071e27",
+                        "secondary": "#4c616c",
+                        "surface-tint": "#1b6d24",
+                        "inverse-on-surface": "#ecf3e4",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "surface-container-low": "#eff6e7",
+                        "on-tertiary-fixed": "#3e001d",
+                        "tertiary-fixed": "#ffd9e2",
+                        "on-secondary-fixed-variant": "#354a53"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-32">
+<header class="bg-emerald-50 dark:bg-emerald-950 flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/50 transition-colors duration-200 ease-in-out rounded-full">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-50">menu</span>
+</button>
+<h1 class="font-manrope font-black text-emerald-900 dark:text-emerald-50 tracking-tight text-2xl">BovineTrack</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden md:flex gap-6 mr-6">
+<a class="font-manrope font-bold text-emerald-900 dark:text-emerald-50 transition-colors duration-200 ease-in-out" href="#">Dashboard</a>
+<a class="font-manrope font-bold text-emerald-700/70 dark:text-emerald-300/70 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/50 transition-colors duration-200 ease-in-out" href="#">Devices</a>
+<a class="font-manrope font-bold text-emerald-700/70 dark:text-emerald-300/70 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/50 transition-colors duration-200 ease-in-out" href="#">Map</a>
+</div>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="Professional ranch manager profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE3nm--784k4DZsEjPwKzH7cTwOXhhErjYQyJe-g34t1JPunJ9DD1SRz6vWk7HqNBNjmM3T5gzppzTE7N7L0yhCRxslixWXWSIOelsA-H8sxZaF0WQKrFXk6_NwpYBPTqPalzCe4Vg3LgmGk2OmmIJxglBFucj8WCzdG2c79u6hzeD2hDCnbI-XLIRoG1ZGDJH_3jPgs7HO4vqmN6_A6QDFsCj8Ln2gTgWbdIMkFtueNC8awssKEMTexh4e_t0GWcfdYWyMYZiw9k"/>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-8">
+<div class="mb-12">
+<span class="text-primary-container font-semibold tracking-widest text-xs uppercase">Device Log ID: BT-7721</span>
+<h2 class="font-headline text-5xl md:text-6xl font-extrabold tracking-tighter mt-2 text-primary">Tracking Activity</h2>
+<p class="text-on-surface-variant max-w-2xl mt-4 text-lg">Real-time telemetry stream from the North Pasture Sector. Monitoring precision location transmissions and gateway handshake status.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col justify-between aspect-square lg:aspect-auto h-64">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">satellite_alt</span>
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-bold">ACTIVE</span>
+</div>
+<div>
+<h3 class="font-headline text-4xl font-black text-on-surface">99.8%</h3>
+<p class="text-on-surface-variant font-medium">Transmission Success Rate</p>
+</div>
+</div>
+<div class="bg-primary p-8 rounded-xl text-on-primary">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary-fixed">timer</span>
+<span class="text-xs font-bold tracking-widest uppercase opacity-80">Frequency</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-1">Every 15 Minutes</h3>
+<p class="opacity-70 text-sm">Next transmission expected in 04:12</p>
+</div>
+</div>
+<div class="lg:col-span-8 bg-surface-container rounded-xl overflow-hidden">
+<div class="p-8 border-b border-outline-variant/10">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<h3 class="font-headline text-2xl font-bold">Transmission Log</h3>
+<div class="flex gap-2">
+<button class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                                Filter
+                            </button>
+<button class="bg-surface-container-lowest text-on-surface px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                                Export CSV
+                            </button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto no-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high">
+<tr>
+<th class="px-8 py-4 font-headline text-sm font-bold text-on-surface-variant uppercase tracking-wider">Timestamp</th>
+<th class="px-8 py-4 font-headline text-sm font-bold text-on-surface-variant uppercase tracking-wider">Coordinates</th>
+<th class="px-8 py-4 font-headline text-sm font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-8 py-4 font-headline text-sm font-bold text-on-surface-variant uppercase tracking-wider">Signal</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="bg-surface-container-lowest/40 hover:bg-surface-container-highest transition-colors">
+<td class="px-8 py-6">
+<div class="font-bold text-on-surface">Oct 24, 14:32:01</div>
+<div class="text-xs text-on-surface-variant">42 seconds ago</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-mono text-sm font-medium tracking-tight">45.5231° N, 122.6765° W</div>
+<div class="text-[10px] text-primary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+                                        SECTOR 4 - NORTH
+                                    </div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                        Successfully sent
+                                    </span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-1">
+<div class="w-1 h-3 bg-primary rounded-full"></div>
+<div class="w-1 h-4 bg-primary rounded-full"></div>
+<div class="w-1 h-5 bg-primary rounded-full"></div>
+<div class="w-1 h-2 bg-outline-variant rounded-full"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors">
+<td class="px-8 py-6">
+<div class="font-bold text-on-surface">Oct 24, 14:17:15</div>
+<div class="text-xs text-on-surface-variant">15 minutes ago</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-mono text-sm font-medium tracking-tight">45.5229° N, 122.6761° W</div>
+<div class="text-[10px] text-primary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+                                        SECTOR 4 - NORTH
+                                    </div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                        Successfully sent
+                                    </span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-1">
+<div class="w-1 h-3 bg-primary rounded-full"></div>
+<div class="w-1 h-4 bg-primary rounded-full"></div>
+<div class="w-1 h-5 bg-primary rounded-full"></div>
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors">
+<td class="px-8 py-6">
+<div class="font-bold text-on-surface">Oct 24, 14:02:44</div>
+<div class="text-xs text-on-surface-variant">30 minutes ago</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-mono text-sm font-medium tracking-tight">45.5225° N, 122.6750° W</div>
+<div class="text-[10px] text-secondary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+                                        TRANSIT GATEWAY
+                                    </div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+                                        Queued
+                                    </span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-1 opacity-40">
+<div class="w-1 h-3 bg-outline rounded-full"></div>
+<div class="w-1 h-4 bg-outline rounded-full"></div>
+<div class="w-1 h-2 bg-outline rounded-full"></div>
+<div class="w-1 h-2 bg-outline rounded-full"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest transition-colors">
+<td class="px-8 py-6">
+<div class="font-bold text-on-surface">Oct 24, 13:47:01</div>
+<div class="text-xs text-on-surface-variant">45 minutes ago</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-mono text-sm font-medium tracking-tight">45.5220° N, 122.6742° W</div>
+<div class="text-[10px] text-primary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+                                        SECTOR 3 - WEST
+                                    </div>
+</td>
+<td class="px-8 py-6">
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                        Successfully sent
+                                    </span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-1">
+<div class="w-1 h-3 bg-primary rounded-full"></div>
+<div class="w-1 h-4 bg-primary rounded-full"></div>
+<div class="w-1 h-5 bg-primary rounded-full"></div>
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-surface-container-low flex justify-center border-t border-outline-variant/10">
+<button class="text-primary font-bold text-sm flex items-center gap-2 hover:underline">
+                        Load Older Transmissions
+                        <span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">battery_charging_80</span>
+</div>
+<h4 class="font-headline font-bold">Battery Status</h4>
+</div>
+<p class="text-sm text-on-surface-variant">Operating at 84%. Estimated 120 days of life remaining at current transmission frequency.</p>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">router</span>
+</div>
+<h4 class="font-headline font-bold">Gateway Health</h4>
+</div>
+<p class="text-sm text-on-surface-variant">Connected to Mesh-Gate-9 (Sector 4). Latency 42ms. Strong signal integrity.</p>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">settings_input_antenna</span>
+</div>
+<h4 class="font-headline font-bold">Protocol</h4>
+</div>
+<p class="text-sm text-on-surface-variant">Using LoRaWAN v1.1. Deep pasture penetration active. Adaptive data rate enabled.</p>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-emerald-50/80 dark:bg-emerald-950/80 backdrop-blur-lg shadow-[0px_-12px_32px_rgba(23,29,20,0.08)] rounded-t-[3rem] md:hidden">
+<a class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter font-medium text-xs tracking-wide">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-50 rounded-full px-5 py-1 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">memory</span>
+<span class="font-inter font-medium text-xs tracking-wide">Devices</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-inter font-medium text-xs tracking-wide">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-inter font-medium text-xs tracking-wide">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-inter font-medium text-xs tracking-wide">Settings</span>
+</a>
+</nav>
+</body></html>
