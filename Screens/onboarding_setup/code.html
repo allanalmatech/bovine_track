@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BovineTrack Setup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#a3f69c",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#86d881",
+                        "tertiary-fixed-dim": "#ffb1c8",
+                        "inverse-primary": "#88d982",
+                        "secondary-container": "#cfe6f2",
+                        "on-background": "#171d14",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#065f18",
+                        "surface-container-high": "#e3ebdc",
+                        "background": "#f5fced",
+                        "on-error-container": "#93000a",
+                        "surface": "#f5fced",
+                        "surface-dim": "#d5dcce",
+                        "surface-container-low": "#eff6e7",
+                        "primary-fixed-dim": "#88d982",
+                        "on-surface-variant": "#41493e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#526772",
+                        "on-primary-fixed-variant": "#005312",
+                        "tertiary": "#6b1d3d",
+                        "primary": "#00450d",
+                        "surface-container-highest": "#dee5d6",
+                        "error": "#ba1a1a",
+                        "outline": "#717a6d",
+                        "inverse-on-surface": "#ecf3e4",
+                        "on-tertiary-fixed": "#3e001d",
+                        "surface-tint": "#1b6d24",
+                        "tertiary-container": "#883454",
+                        "secondary-fixed-dim": "#b4cad6",
+                        "on-surface": "#171d14",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#002204",
+                        "surface-variant": "#dee5d6",
+                        "secondary-fixed": "#cfe6f2",
+                        "secondary": "#4c616c",
+                        "outline-variant": "#c0c9bb",
+                        "on-secondary-fixed": "#071e27",
+                        "surface-bright": "#f5fced",
+                        "tertiary-fixed": "#ffd9e2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e9f0e1",
+                        "inverse-surface": "#2c3228",
+                        "on-tertiary-container": "#ffaec6",
+                        "on-secondary-fixed-variant": "#354a53",
+                        "on-tertiary-fixed-variant": "#7a2949"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f5fced; color: #171d14; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen">
+<main class="max-w-md mx-auto min-h-screen flex flex-col p-6 space-y-12">
+<!-- SCREEN 1: COMPATIBILITY CHECK -->
+<section class="flex-1 flex flex-col justify-center animate-fade-in" id="compatibility-check">
+<div class="text-center mb-10">
+<div class="w-20 h-20 bg-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+<span class="material-symbols-outlined text-primary-fixed text-4xl animate-pulse" data-icon="sync">sync</span>
+</div>
+<h1 class="text-3xl font-extrabold tracking-tight text-primary mb-2">Initializing System</h1>
+<p class="text-on-surface-variant">Checking hardware requirements...</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-medium">Android Version</span>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-medium">GPS Availability</span>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-medium">Network Connection</span>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-medium text-on-surface-variant opacity-50">Permissions</span>
+<div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+</div>
+</div>
+</section>
+<hr class="border-t-4 border-surface-variant opacity-10"/>
+<!-- SCREEN 2: DEVICE INCOMPATIBLE -->
+<section class="flex-1 flex flex-col justify-center py-12" id="device-incompatible">
+<div class="bg-error-container/30 rounded-xl p-8 text-center border-2 border-error-container">
+<span class="material-symbols-outlined text-error text-6xl mb-4" data-icon="error_outline">error_outline</span>
+<h2 class="text-2xl font-black text-on-error-container mb-4">Incompatible Device</h2>
+<p class="text-on-error-container/80 mb-8 leading-relaxed">Your device does not meet the minimum hardware requirements for BovineTrack.</p>
+<div class="bg-surface-container-lowest rounded-lg p-4 mb-8 space-y-3 text-left">
+<div class="flex items-center gap-3 text-error">
+<span class="material-symbols-outlined" data-icon="block">block</span>
+<span class="text-sm font-semibold">No GPS Module Detected</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary" data-icon="check">check</span>
+<span class="text-sm">Storage Capacity (Pass)</span>
+</div>
+</div>
+<button class="w-full bg-error text-on-error py-4 rounded-full font-bold uppercase tracking-wider text-sm hover:opacity-90 transition-all">
+                    Exit Application
+                </button>
+</div>
+</section>
+<hr class="border-t-4 border-surface-variant opacity-10"/>
+<!-- SCREEN 3: ONBOARDING FLOW (EXAMPLE 1 OF 3) -->
+<section class="flex-1 flex flex-col items-center text-center" id="onboarding-1">
+<div class="w-full aspect-square bg-surface-container rounded-xl overflow-hidden mb-8 relative">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent"></div>
+<img class="w-full h-full object-cover mix-blend-overlay" data-alt="Vast green pasture landscape under bright blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4PsETXxjGYh8xj99mAfVYwretF5E3A_OQBFGnYqlm3FNXzx-QrpMKT0PbPQ8xsCCXnVcM5ubWXVekGDTA3QqWBJUmSPVD1CWcWR_uHlVc7XV1jsjIA9DPVUFd7WM7Kx5az3D56JPRMb1XU-Y4mGBOG2dtu38cuZkudt1jN6cmCfxuYtcZ_Nb-wxofEwCh9joHbPdImwCRkTQgXtzP1p0qI9SzUaoRCiew1oaeAX5b09D8m7w4s9HALZbT1GEb2obzy_25Z5ztEoU"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-8xl" data-icon="satellite_alt">satellite_alt</span>
+</div>
+</div>
+<h2 class="text-4xl font-extrabold text-primary mb-4 leading-tight">Track from anywhere</h2>
+<p class="text-on-surface-variant leading-relaxed px-4">Monitor your entire herd in real-time using high-precision satellite telemetry, even in remote grazing sectors.</p>
+<div class="flex gap-2 my-8">
+<div class="w-8 h-2 bg-primary rounded-full"></div>
+<div class="w-2 h-2 bg-outline-variant rounded-full"></div>
+<div class="w-2 h-2 bg-outline-variant rounded-full"></div>
+</div>
+<div class="mt-auto w-full flex items-center justify-between pt-6">
+<button class="text-on-surface-variant font-semibold px-6 py-2">Skip</button>
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                    Next
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+<hr class="border-t-4 border-surface-variant opacity-10"/>
+<!-- SCREEN 4: ROLE SELECTION -->
+<section class="flex-1 flex flex-col justify-center" id="role-selection">
+<h2 class="text-3xl font-black text-primary mb-2">Setup Profile</h2>
+<p class="text-on-surface-variant mb-10">How will you use BovineTrack today?</p>
+<div class="grid gap-6">
+<!-- Server Card -->
+<button class="group relative text-left p-8 bg-surface-container-low rounded-xl border-2 border-transparent hover:border-primary-fixed hover:bg-surface-container transition-all">
+<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary-fixed text-3xl" data-icon="dashboard">dashboard</span>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2">Server (Tracker Monitor)</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Best for Ranch Managers. View dashboards, manage geofences, and receive herd alerts.</p>
+<div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</div>
+</button>
+<!-- Client Card -->
+<button class="group relative text-left p-8 bg-surface-container-low rounded-xl border-2 border-transparent hover:border-primary-fixed hover:bg-surface-container transition-all">
+<div class="w-14 h-14 bg-secondary-container rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-3xl" data-icon="sensors">sensors</span>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2">Client (Tracked Device)</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Install this on ruggedized handhelds or tags to broadcast location data to the ranch hub.</p>
+<div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</div>
+</button>
+</div>
+</section>
+</main>
+<!-- Contextual FAB (Only shown for Home/Main Actionable screens, hidden here as per policy) -->
+<!-- Nav Bars hidden for initial setup journey as per policy -->
+</body></html>

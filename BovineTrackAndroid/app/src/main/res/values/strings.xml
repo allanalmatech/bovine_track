@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BovineTrack</string>
+    <string name="compatibility_title">Initializing System</string>
+    <string name="incompatible_title">Incompatible Device</string>
+    <string name="client_role">Client (Tracked Device)</string>
+    <string name="server_role">Server (Tracker Monitor)</string>
+    <string name="notif_channel_tracking">Tracking Service</string>
+    <string name="notif_channel_alerts">Geofence Alerts</string>
+</resources>

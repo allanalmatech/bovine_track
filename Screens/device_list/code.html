@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BovineTrack | Device Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00450d",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#86d881",
+              "primary-fixed-dim": "#88d982",
+              "surface-container": "#e9f0e1",
+              "outline": "#717a6d",
+              "tertiary-container": "#883454",
+              "inverse-surface": "#2c3228",
+              "primary-container": "#065f18",
+              "on-secondary-container": "#526772",
+              "error": "#ba1a1a",
+              "surface": "#f5fced",
+              "tertiary": "#6b1d3d",
+              "surface-bright": "#f5fced",
+              "on-tertiary-container": "#ffaec6",
+              "on-surface": "#171d14",
+              "outline-variant": "#c0c9bb",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#cfe6f2",
+              "background": "#f5fced",
+              "tertiary-fixed-dim": "#ffb1c8",
+              "surface-container-highest": "#dee5d6",
+              "surface-dim": "#d5dcce",
+              "secondary-container": "#cfe6f2",
+              "on-primary-fixed": "#002204",
+              "on-primary-fixed-variant": "#005312",
+              "on-background": "#171d14",
+              "primary-fixed": "#a3f69c",
+              "on-tertiary": "#ffffff",
+              "inverse-primary": "#88d982",
+              "on-error": "#ffffff",
+              "surface-container-high": "#e3ebdc",
+              "on-tertiary-fixed-variant": "#7a2949",
+              "surface-variant": "#dee5d6",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#41493e",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#071e27",
+              "secondary": "#4c616c",
+              "surface-tint": "#1b6d24",
+              "inverse-on-surface": "#ecf3e4",
+              "secondary-fixed-dim": "#b4cad6",
+              "surface-container-low": "#eff6e7",
+              "on-tertiary-fixed": "#3e001d",
+              "tertiary-fixed": "#ffd9e2",
+              "on-secondary-fixed-variant": "#354a53"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(16px);
+      }
+      .signature-pulse {
+        background: linear-gradient(45deg, #00450d, #065f18);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-32">
+<header class="bg-emerald-50 dark:bg-emerald-950 flex justify-between items-center w-full px-6 py-4 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-50" data-icon="menu">menu</span>
+<h1 class="font-manrope font-black text-emerald-900 dark:text-emerald-50 tracking-tight text-2xl">BovineTrack</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a ranch manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEzk5aeFgD1P-3ZqjbSiFG5UGxO-vE-P4QmY8wxx-dd7XRIrKU1IT6sK0h1dFkVMx--pwFCF8wsB0fCH8uLGCxzoNtVH893AVSo_4Cj7aYGCETEFx_aBC4z51SH9auFUsvT8cb5A0yj1xI-cSiuE8YCZhJ1P_ecsXr_MaYUs9kdeyU-MlQS5snsq-uYqurROmzEuThgmTJpZ8exlscA1wwNNfT9VbLBnEMGAVD4i0dYTQfmZazLKtCmH68_03ZvUyuv-vn0-by-Lo"/>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 pt-8">
+<section class="mb-8">
+<div class="flex justify-between items-end mb-6">
+<div>
+<p class="text-on-secondary-fixed-variant font-medium tracking-wide text-sm uppercase">Livestock Fleet</p>
+<h2 class="font-headline font-extrabold text-4xl text-primary tracking-tight">Tracked Devices</h2>
+</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></span>
+<span class="font-label font-semibold text-primary text-sm">12 Online</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col justify-between transition-colors duration-200 ease-in-out hover:bg-emerald-100/50">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Alpha Bull - S22</h3>
+<p class="text-on-surface-variant text-sm">Pasture Sector North</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold tracking-wider">ONLINE</span>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-base" data-icon="battery_full">battery_full</span>
+<span class="font-label font-bold text-on-surface text-sm">94%</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+<span class="text-xs">Seen 2m ago</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col justify-between transition-colors duration-200 ease-in-out hover:bg-emerald-100/50">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Bessie 04 - Pixel 6</h3>
+<p class="text-on-surface-variant text-sm">Holding Pen B</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold tracking-wider">ONLINE</span>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-base" data-icon="battery_low">battery_low</span>
+<span class="font-label font-bold text-tertiary text-sm">18%</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+<span class="text-xs">Seen 5m ago</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col justify-between transition-colors duration-200 ease-in-out hover:bg-emerald-100/50">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center opacity-60">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface opacity-60">Charlie - iPhone 11</h3>
+<p class="text-on-surface-variant text-sm">West Meadow</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold tracking-wider">OFFLINE</span>
+</div>
+<div class="mt-8 flex justify-between items-center opacity-60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-base" data-icon="battery_unknown">battery_unknown</span>
+<span class="font-label font-bold text-on-surface text-sm">--</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+<span class="text-xs">Seen 4h ago</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col justify-between transition-colors duration-200 ease-in-out hover:bg-emerald-100/50">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Delta Lead - S21</h3>
+<p class="text-on-surface-variant text-sm">Pasture Sector South</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold tracking-wider">ONLINE</span>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-base" data-icon="battery_4_bar">battery_4_bar</span>
+<span class="font-label font-bold text-on-surface text-sm">62%</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+<span class="text-xs">Seen 1m ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-12 bg-primary text-on-primary rounded-xl p-8 relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-headline font-bold text-2xl mb-2">Fleet Health Summary</h4>
+<p class="text-on-primary-container font-medium max-w-xs mb-6">92% of devices are operating within normal telemetry parameters.</p>
+<div class="flex gap-4">
+<button class="bg-primary-fixed text-on-primary-fixed font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+                        Force Sync All
+                    </button>
+</div>
+</div>
+<div class="absolute right-0 bottom-0 top-0 w-1/3 bg-primary-container opacity-20 transform skew-x-12 translate-x-12"></div>
+</section>
+</main>
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60]">
+<button class="signature-pulse text-primary-fixed shadow-2xl px-8 py-4 rounded-full flex items-center gap-3 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="font-headline font-bold">Register Device</span>
+</button>
+</div>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-emerald-50/80 dark:bg-emerald-950/80 backdrop-blur-lg shadow-[0px_-12px_32px_rgba(23,29,20,0.08)] rounded-t-[3rem]">
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-inter font-medium text-xs tracking-wide">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-50 rounded-full px-5 py-1 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+<span class="font-inter font-medium text-xs tracking-wide">Devices</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-inter font-medium text-xs tracking-wide">Map</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-inter font-medium text-xs tracking-wide">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-inter font-medium text-xs tracking-wide">Settings</span>
+</div>
+</nav>
+</body></html>

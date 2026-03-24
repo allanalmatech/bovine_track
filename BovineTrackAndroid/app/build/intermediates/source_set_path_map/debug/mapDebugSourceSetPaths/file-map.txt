@@ -1,0 +1,48 @@
+com.bovinetrack.app-work-runtime-2.10.0-0 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\00eb9b0dac47c7097510252dda16c1cf\transformed\work-runtime-2.10.0\res
+com.bovinetrack.app-lifecycle-service-2.8.6-1 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\03a2dee3544527ad5cc253bc1238c796\transformed\lifecycle-service-2.8.6\res
+com.bovinetrack.app-core-ktx-1.13.0-2 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\07a0f0632ec81995101b14657192dcc5\transformed\core-ktx-1.13.0\res
+com.bovinetrack.app-profileinstaller-1.4.0-3 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\0e3644dba526594d33a55dca33d3eb53\transformed\profileinstaller-1.4.0\res
+com.bovinetrack.app-lifecycle-livedata-2.8.6-4 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\1d9f338bfa613d15a856df0731a32731\transformed\lifecycle-livedata-2.8.6\res
+com.bovinetrack.app-play-services-basement-18.4.0-5 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\1f5db015c5dfdab343dc94b6b71749d7\transformed\play-services-basement-18.4.0\res
+com.bovinetrack.app-drawerlayout-1.1.1-6 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\24fce56cf3954d39b6e6a2131725e29d\transformed\drawerlayout-1.1.1\res
+com.bovinetrack.app-startup-runtime-1.1.1-7 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\2678c3635df39c74d13d8daded246f6c\transformed\startup-runtime-1.1.1\res
+com.bovinetrack.app-coordinatorlayout-1.1.0-8 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\2af27966cd3dfa4e2534d6eb5b12a49a\transformed\coordinatorlayout-1.1.0\res
+com.bovinetrack.app-material-1.12.0-9 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\30ee7a956aa74c7c470bd20fb0828c01\transformed\material-1.12.0\res
+com.bovinetrack.app-transition-1.5.0-10 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\33b5f3c7ca3b1dda5c7a571a68318719\transformed\transition-1.5.0\res
+com.bovinetrack.app-activity-1.8.0-11 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\3a697515f9cb5b7c22157afab77c5d1b\transformed\activity-1.8.0\res
+com.bovinetrack.app-firebase-common-21.0.0-12 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4169aca2e669d7a513f5b11c78a35ebe\transformed\firebase-common-21.0.0\res
+com.bovinetrack.app-lifecycle-viewmodel-release-13 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\43d0ff0c4c28045afc56c24a2f72f564\transformed\lifecycle-viewmodel-release\res
+com.bovinetrack.app-sqlite-framework-2.4.0-14 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\472eed88a3410a4fa6e19230e4c2e195\transformed\sqlite-framework-2.4.0\res
+com.bovinetrack.app-recyclerview-1.3.2-15 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4c11e4b4438baa2f94b2c5160d3f45e4\transformed\recyclerview-1.3.2\res
+com.bovinetrack.app-emoji2-1.3.0-16 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\4cfe3b26ced14ba50c99ab70f2d2d1e7\transformed\emoji2-1.3.0\res
+com.bovinetrack.app-appcompat-resources-1.7.0-17 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\50498c3008ce90f26684ba09a185af92\transformed\appcompat-resources-1.7.0\res
+com.bovinetrack.app-play-services-base-18.5.0-18 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5aaf36544a6b80779cade60e5aafe10d\transformed\play-services-base-18.5.0\res
+com.bovinetrack.app-appcompat-1.7.0-19 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\5af9049f09bc67b44d2e1f237880defa\transformed\appcompat-1.7.0\res
+com.bovinetrack.app-cardview-1.0.0-20 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\6097418dcc0918e5899c42b0c5fecee1\transformed\cardview-1.0.0\res
+com.bovinetrack.app-tracing-1.2.0-21 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\637377b73dade0e316babf71b8c8f9e2\transformed\tracing-1.2.0\res
+com.bovinetrack.app-savedstate-1.2.1-22 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\827f1d01db4e370373c942a907e6bbfe\transformed\savedstate-1.2.1\res
+com.bovinetrack.app-fragment-1.5.4-23 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\855fe6458f6596780d3f3027b4c2b24f\transformed\fragment-1.5.4\res
+com.bovinetrack.app-lifecycle-livedata-core-2.8.6-24 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\86c6c14a54c09940f27ee61c336b11ab\transformed\lifecycle-livedata-core-2.8.6\res
+com.bovinetrack.app-lifecycle-viewmodel-savedstate-2.8.6-25 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\87656ab09a425443717f40c88ca2f852\transformed\lifecycle-viewmodel-savedstate-2.8.6\res
+com.bovinetrack.app-room-ktx-2.6.1-26 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9579166104d4ccbd5a4b1501835983eb\transformed\room-ktx-2.6.1\res
+com.bovinetrack.app-lifecycle-process-2.8.6-27 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9a2632e95c71903b5a4bc3900e6c5118\transformed\lifecycle-process-2.8.6\res
+com.bovinetrack.app-sqlite-2.4.0-28 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\9c7afefff17350f35922e601a33317d1\transformed\sqlite-2.4.0\res
+com.bovinetrack.app-lifecycle-livedata-core-ktx-2.8.6-29 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\a136dbd1c356ea3bdb162cd0b445baae\transformed\lifecycle-livedata-core-ktx-2.8.6\res
+com.bovinetrack.app-constraintlayout-2.2.0-30 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\a48b3e34f8274026774554710475bda6\transformed\constraintlayout-2.2.0\res
+com.bovinetrack.app-emoji2-views-helper-1.3.0-31 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\a64cdd1ec68140738e17ed60fde9c415\transformed\emoji2-views-helper-1.3.0\res
+com.bovinetrack.app-viewpager2-1.1.0-beta02-32 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\ab26ab56370b15be87454b5f9c27f00f\transformed\viewpager2-1.1.0-beta02\res
+com.bovinetrack.app-annotation-experimental-1.4.1-33 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b09dd570dc2e6192a7bbc917b8558164\transformed\annotation-experimental-1.4.1\res
+com.bovinetrack.app-play-services-maps-19.0.0-34 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b74b414dbab05bbc989b909caf071bfd\transformed\play-services-maps-19.0.0\res
+com.bovinetrack.app-core-1.13.0-35 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\b793e37fc166a9cb844610dbd668e125\transformed\core-1.13.0\res
+com.bovinetrack.app-tracing-ktx-1.2.0-36 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\c66ffc74e8c76e8e9b00baefefde4493\transformed\tracing-ktx-1.2.0\res
+com.bovinetrack.app-core-runtime-2.2.0-37 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\c9df67a55912bee18e9201ca0da2f3cb\transformed\core-runtime-2.2.0\res
+com.bovinetrack.app-lifecycle-runtime-release-38 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\ceb29a77e24763676ba6971227d1cf2e\transformed\lifecycle-runtime-release\res
+com.bovinetrack.app-customview-poolingcontainer-1.0.0-39 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\d6c61ba7e59e69e0d5feb5048fc545de\transformed\customview-poolingcontainer-1.0.0\res
+com.bovinetrack.app-room-runtime-2.6.1-40 C:\Users\Alma Tech PC\.gradle\caches\8.14\transforms\f3b13b029718e248596a3f904e5672c6\transformed\room-runtime-2.6.1\res
+com.bovinetrack.app-pngs-41 F:\mini_project\bovine_track\BovineTrackAndroid\app\build\generated\res\pngs\debug
+com.bovinetrack.app-resValues-42 F:\mini_project\bovine_track\BovineTrackAndroid\app\build\generated\res\resValues\debug
+com.bovinetrack.app-packageDebugResources-43 F:\mini_project\bovine_track\BovineTrackAndroid\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.bovinetrack.app-packageDebugResources-44 F:\mini_project\bovine_track\BovineTrackAndroid\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.bovinetrack.app-debug-45 F:\mini_project\bovine_track\BovineTrackAndroid\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.bovinetrack.app-debug-46 F:\mini_project\bovine_track\BovineTrackAndroid\app\src\debug\res
+com.bovinetrack.app-main-47 F:\mini_project\bovine_track\BovineTrackAndroid\app\src\main\res

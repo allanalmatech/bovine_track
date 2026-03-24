@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - BovineTrack</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00450d",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#86d881",
+              "primary-fixed-dim": "#88d982",
+              "surface-container": "#e9f0e1",
+              "outline": "#717a6d",
+              "tertiary-container": "#883454",
+              "inverse-surface": "#2c3228",
+              "primary-container": "#065f18",
+              "on-secondary-container": "#526772",
+              "error": "#ba1a1a",
+              "surface": "#f5fced",
+              "tertiary": "#6b1d3d",
+              "surface-bright": "#f5fced",
+              "on-tertiary-container": "#ffaec6",
+              "on-surface": "#171d14",
+              "outline-variant": "#c0c9bb",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#cfe6f2",
+              "background": "#f5fced",
+              "tertiary-fixed-dim": "#ffb1c8",
+              "surface-container-highest": "#dee5d6",
+              "surface-dim": "#d5dcce",
+              "secondary-container": "#cfe6f2",
+              "on-primary-fixed": "#002204",
+              "on-primary-fixed-variant": "#005312",
+              "on-background": "#171d14",
+              "primary-fixed": "#a3f69c",
+              "on-tertiary": "#ffffff",
+              "inverse-primary": "#88d982",
+              "on-error": "#ffffff",
+              "surface-container-high": "#e3ebdc",
+              "on-tertiary-fixed-variant": "#7a2949",
+              "surface-variant": "#dee5d6",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#41493e",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#071e27",
+              "secondary": "#4c616c",
+              "surface-tint": "#1b6d24",
+              "inverse-on-surface": "#ecf3e4",
+              "secondary-fixed-dim": "#b4cad6",
+              "surface-container-low": "#eff6e7",
+              "on-tertiary-fixed": "#3e001d",
+              "tertiary-fixed": "#ffd9e2",
+              "on-secondary-fixed-variant": "#354a53"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<header class="bg-emerald-50 dark:bg-emerald-950 flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-50 p-2 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/50 rounded-full transition-colors duration-200 ease-in-out cursor-pointer" data-icon="menu">menu</span>
+<h1 class="font-manrope font-black text-emerald-900 dark:text-emerald-50 text-2xl tracking-tight">BovineTrack</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="User profile avatar manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q11abW32kzqehtsSzhsb-icqKi01JodlH64HSc2RfCE0-3y_ueuA-Adg-1og1IOTqmwjtdu9oH5qMtvXkWJnFMki0SmaOKeAt03x3yqOVY271LI1g4t6eKNx9MFzUpskntWkL9amqq_35xwMOMcuLvdyixGly-zVujRk4pXCxXErIGPX_Sx1THbvy-dqeUFRBine1u_oaLB7ULVw4H82DQAMKqrMEmt1GIJasSJTKpy9VK9TrXFpRTw8UN2WU-cj20h63-thZiQ"/>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-3xl mx-auto">
+<section class="mb-10">
+<h2 class="font-headline font-extrabold text-3xl mb-6 px-2">Settings</h2>
+<div class="bg-surface-container-low rounded-xl p-2 space-y-1">
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-highest transition-colors rounded-lg cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Account Info</p>
+<p class="text-sm text-on-surface-variant">Ranch Manager • North Pasture Sector</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<section class="mb-8">
+<p class="text-xs font-bold tracking-widest text-primary px-6 mb-3 uppercase">Role Management</p>
+<div class="bg-surface-container-low rounded-xl p-2 space-y-1">
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-highest transition-colors rounded-lg cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="swap_horiz">swap_horiz</span>
+<span class="font-medium">Switch to Client</span>
+</div>
+<span class="text-xs font-bold bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full">ACTIVE</span>
+</div>
+</div>
+</section>
+<section class="mb-8">
+<p class="text-xs font-bold tracking-widest text-primary px-6 mb-3 uppercase">Preferences</p>
+<div class="bg-surface-container-low rounded-xl p-2 space-y-1">
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="notifications_active">notifications_active</span>
+<span class="font-medium">Notification Preferences</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="precision_manufacturing">precision_manufacturing</span>
+<div>
+<p class="font-medium">Simulation Mode</p>
+<p class="text-xs text-on-surface-variant">Enable virtual herd tracking for testing</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</section>
+<section class="mb-8">
+<p class="text-xs font-bold tracking-widest text-primary px-6 mb-3 uppercase">Device Settings</p>
+<div class="bg-surface-container-low rounded-xl p-2 space-y-1">
+<div class="p-4">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="refresh">refresh</span>
+<span class="font-medium">GPS Refresh Interval</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="py-2 rounded-full border border-outline-variant text-sm font-medium hover:bg-primary-fixed hover:border-primary-fixed transition-colors">30s</button>
+<button class="py-2 rounded-full bg-primary text-on-primary text-sm font-medium">1m</button>
+<button class="py-2 rounded-full border border-outline-variant text-sm font-medium hover:bg-primary-fixed hover:border-primary-fixed transition-colors">5m</button>
+<button class="py-2 rounded-full border border-outline-variant text-sm font-medium hover:bg-primary-fixed hover:border-primary-fixed transition-colors">15m</button>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-12">
+<div class="p-4 bg-error-container rounded-xl flex items-center justify-between group cursor-pointer active:scale-95 transition-transform">
+<div class="flex items-center gap-4 text-on-error-container">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-bold">Log Out of Device</span>
+</div>
+<span class="material-symbols-outlined text-on-error-container opacity-50" data-icon="chevron_right">chevron_right</span>
+</div>
+<p class="text-center mt-6 text-xs text-outline font-medium tracking-tight">Version 2.4.0 • Build 882</p>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-emerald-50/80 dark:bg-emerald-950/80 backdrop-blur-lg shadow-[0px_-12px_32px_rgba(23,29,20,0.08)] rounded-t-[3rem]">
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-inter font-medium text-xs tracking-wide">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+<span class="font-inter font-medium text-xs tracking-wide">Devices</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-inter font-medium text-xs tracking-wide">Map</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 scale-95 active:scale-90 transition-transform hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-inter font-medium text-xs tracking-wide">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-50 rounded-full px-5 py-1 scale-95 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-inter font-medium text-xs tracking-wide">Settings</span>
+</div>
+</nav>
+</body></html>

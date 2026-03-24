@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "321115442733",
+    "project_id": "bovinetrack-a10c9",
+    "storage_bucket": "bovinetrack-a10c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321115442733:android:28ba5085b3317c1d0c72a4",
+        "android_client_info": {
+          "package_name": "com.bse.bovinetrack.bovine_track"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBopBPxI121kslxpDrn-cObmkiZ7mdDQYI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bt_primary">#00450D</color>
+    <color name="bt_primary_container">#065F18</color>
+    <color name="bt_primary_fixed">#A3F69C</color>
+    <color name="bt_background">#F5FCED</color>
+    <color name="bt_surface">#EFF6E7</color>
+    <color name="bt_surface_alt">#E9F0E1</color>
+    <color name="bt_on_surface">#171D14</color>
+    <color name="bt_muted">#526772</color>
+    <color name="bt_alert">#BA1A1A</color>
+    <color name="bt_alert_bg">#FFDAD6</color>
+</resources>

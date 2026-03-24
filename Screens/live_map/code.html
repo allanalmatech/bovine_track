@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00450d",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#86d881",
+              "primary-fixed-dim": "#88d982",
+              "surface-container": "#e9f0e1",
+              "outline": "#717a6d",
+              "tertiary-container": "#883454",
+              "inverse-surface": "#2c3228",
+              "primary-container": "#065f18",
+              "on-secondary-container": "#526772",
+              "error": "#ba1a1a",
+              "surface": "#f5fced",
+              "tertiary": "#6b1d3d",
+              "surface-bright": "#f5fced",
+              "on-tertiary-container": "#ffaec6",
+              "on-surface": "#171d14",
+              "outline-variant": "#c0c9bb",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#cfe6f2",
+              "background": "#f5fced",
+              "tertiary-fixed-dim": "#ffb1c8",
+              "surface-container-highest": "#dee5d6",
+              "surface-dim": "#d5dcce",
+              "secondary-container": "#cfe6f2",
+              "on-primary-fixed": "#002204",
+              "on-primary-fixed-variant": "#005312",
+              "on-background": "#171d14",
+              "primary-fixed": "#a3f69c",
+              "on-tertiary": "#ffffff",
+              "inverse-primary": "#88d982",
+              "on-error": "#ffffff",
+              "surface-container-high": "#e3ebdc",
+              "on-tertiary-fixed-variant": "#7a2949",
+              "surface-variant": "#dee5d6",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#41493e",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#071e27",
+              "secondary": "#4c616c",
+              "surface-tint": "#1b6d24",
+              "inverse-on-surface": "#ecf3e4",
+              "secondary-fixed-dim": "#b4cad6",
+              "surface-container-low": "#eff6e7",
+              "on-tertiary-fixed": "#3e001d",
+              "tertiary-fixed": "#ffd9e2",
+              "on-secondary-fixed-variant": "#354a53"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(to bottom, rgba(245, 252, 237, 0.4) 0%, transparent 15%, transparent 85%, rgba(245, 252, 237, 0.8) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Top Navigation Shell -->
+<header class="bg-emerald-50 dark:bg-emerald-950 flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/50 transition-colors duration-200 ease-in-out rounded-full">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-50" data-icon="menu">menu</span>
+</button>
+<h1 class="font-manrope font-black text-emerald-900 dark:text-emerald-50 text-2xl tracking-tight">BovineTrack</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-manrope font-bold tracking-tight text-emerald-700/70 dark:text-emerald-300/70 hover:text-emerald-900 dark:hover:text-emerald-50 transition-colors" href="#">Dashboard</a>
+<a class="font-manrope font-bold tracking-tight text-emerald-700/70 dark:text-emerald-300/70 hover:text-emerald-900 dark:hover:text-emerald-50 transition-colors" href="#">Devices</a>
+<a class="font-manrope font-bold tracking-tight text-emerald-900 dark:text-emerald-50 border-b-2 border-emerald-900 transition-colors" href="#">Map</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border-2 border-primary overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a ranch manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrHWx0xm_4uYWjtKqECQByfMaCP1s3Ipo4yseqLxu3GWjrUEsVtyaUuBFziCVvl-oJ-UglafJbdhKB_BvqbCWdOrCcMTCGMI0TGMoLcfaCMLtg_rdstFH1-J8DEtTS1Wm87hakE8FtmvWh2aP0h3YmcUle0dcolF-f2GA2msO__8cSpfDS1wFPhpqmW5TrOr24Ro4GZkGnEkOfbiXLRf8aITVr3NMcWylpOYQ181hqo8Fqu8Itc2X2_xduogA5_SefAl0MoKLgSRk"/>
+</div>
+</div>
+</header>
+<!-- Map Canvas Container -->
+<main class="relative h-screen w-full pt-16 overflow-hidden">
+<!-- Mock Map Background -->
+<div class="absolute inset-0 z-0">
+<img alt="Satellite View Pasture" class="w-full h-screen object-cover grayscale-[20%] contrast-[110%] brightness-[90%]" data-alt="Satellite view of green agricultural pastures and ranch land" data-location="North Pasture Sector" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAry_I1MLc3pyPhJ-6TRFypeNNXXM-GtMJ5LP8I3O5PeoURtYt20ayl4efDmsc7164z-fYUbRtKiEbvPJzvz_mFDotW9ZX_oz9CtGLsycMGaxmhQFjohRBePV3rpw6h4SvOXbGw_LVvIqlh04HIb2j23rF0vKq7WwMossqVnQ-a_CFyejgqyAE78AvGhMy2SIQhOMeG_1LleU-rZ_eOkVkzihRPjb0AA8YVo9FF2VhyASnNzvWA9k1o29QSmUXSy_SAGMd2t96j84c"/>
+<div class="absolute inset-0 map-gradient-overlay pointer-events-none"></div>
+<!-- Safe Zone Geofence -->
+<div class="absolute top-[30%] left-[40%] w-[400px] h-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-primary-fixed/40 bg-primary-fixed/10 backdrop-blur-[2px]">
+<div class="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary/80 text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-full">Safe Zone Alpha</div>
+</div>
+<!-- Danger Zone Geofence -->
+<div class="absolute top-[65%] left-[70%] w-[250px] h-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-error/30 bg-error/10 backdrop-blur-[1px]">
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-error/80 text-on-error text-[10px] font-bold uppercase tracking-widest rounded-full">Boundary Hazard</div>
+</div>
+<!-- Livestock Markers -->
+<!-- Alpha Bull Marker -->
+<div class="absolute top-[35%] left-[45%] group cursor-pointer">
+<div class="relative">
+<div class="w-12 h-12 bg-primary rounded-full border-4 border-on-primary flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary" data-icon="pets" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 bg-white/90 backdrop-blur rounded-lg text-xs font-bold shadow-md border border-outline-variant/20">
+                        Alpha Bull <span class="text-primary ml-1">• Active</span>
+</div>
+</div>
+</div>
+<!-- Bravo Cow Marker -->
+<div class="absolute top-[62%] left-[68%] group cursor-pointer">
+<div class="relative">
+<div class="w-10 h-10 bg-tertiary rounded-full border-4 border-on-tertiary flex items-center justify-center shadow-xl animate-pulse">
+<span class="material-symbols-outlined text-on-tertiary" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 bg-error-container text-on-error-container backdrop-blur rounded-lg text-xs font-bold shadow-md">
+                        Bravo Cow <span class="ml-1">⚠ Critical</span>
+</div>
+</div>
+</div>
+<!-- Other Markers -->
+<div class="absolute top-[28%] left-[32%] w-4 h-4 bg-primary-container border-2 border-white rounded-full shadow-sm"></div>
+<div class="absolute top-[42%] left-[41%] w-4 h-4 bg-primary-container border-2 border-white rounded-full shadow-sm"></div>
+<div class="absolute top-[38%] left-[52%] w-4 h-4 bg-primary-container border-2 border-white rounded-full shadow-sm"></div>
+</div>
+<!-- Map Controls (Floating) -->
+<div class="absolute right-6 top-24 flex flex-col gap-3 z-10">
+<div class="flex flex-col bg-surface-container-lowest/90 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
+<button class="p-4 hover:bg-surface-container transition-colors border-b border-outline-variant/10">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<button class="p-4 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+</div>
+<button class="p-4 bg-surface-container-lowest/90 backdrop-blur-md rounded-2xl shadow-xl hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+</button>
+<button class="p-4 bg-surface-container-lowest/90 backdrop-blur-md rounded-2xl shadow-xl hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+</button>
+</div>
+<!-- Bottom Sheet Detail Panel (Material 3 Style) -->
+<div class="fixed bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[600px] z-20">
+<div class="bg-surface-container-lowest/95 backdrop-blur-xl rounded-xl shadow-[0px_-12px_32px_rgba(23,29,20,0.12)] p-6 md:p-8 flex flex-col gap-6">
+<!-- Drag Handle -->
+<div class="w-12 h-1.5 bg-outline-variant/30 rounded-full self-center -mt-2"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 bg-primary-fixed rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-4xl" data-icon="memory">memory</span>
+</div>
+<div>
+<h2 class="font-manrope font-extrabold text-2xl text-on-surface tracking-tight">Alpha Bull</h2>
+<p class="text-sm text-on-surface-variant flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                Live Tracking • Device #BT-992
+                            </p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline mb-1">Last Update</span>
+<span class="font-mono text-sm font-semibold">14:02:11</span>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">Movement</span>
+<div class="flex items-baseline gap-1">
+<span class="text-xl font-manrope font-black text-on-surface">4.2</span>
+<span class="text-xs font-medium text-outline">km/h</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">Signal</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="signal_cellular_4_bar" style="font-variation-settings: 'FILL' 1;">signal_cellular_4_bar</span>
+<span class="text-sm font-bold text-on-surface">-64 dBm</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">Battery</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="battery_full" style="font-variation-settings: 'FILL' 1;">battery_full</span>
+<span class="text-sm font-bold text-on-surface">88%</span>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary font-manrope font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+                        View History
+                    </button>
+<button class="p-4 bg-surface-container-high rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications_off">notifications_off</span>
+</button>
+<button class="p-4 bg-surface-container-high rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-emerald-50/80 dark:bg-emerald-950/80 backdrop-blur-lg rounded-t-[3rem] shadow-[0px_-12px_32px_rgba(23,29,20,0.08)]">
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-inter font-medium text-xs tracking-wide">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="memory">memory</span>
+<span class="font-inter font-medium text-xs tracking-wide">Devices</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-50 rounded-full px-5 py-1 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-0.5" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-inter font-medium text-xs tracking-wide">Map</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="notifications_active">notifications_active</span>
+<span class="font-inter font-medium text-xs tracking-wide">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-400 opacity-70 hover:opacity-100 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-inter font-medium text-xs tracking-wide">Settings</span>
+</div>
+</nav>
+</body></html>
