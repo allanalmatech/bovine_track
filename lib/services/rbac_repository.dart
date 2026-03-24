@@ -307,7 +307,7 @@ class RbacRepository {
     final boundaries = <ManagedBoundary>[];
     if (boundariesSnapshot.value is Map) {
       (boundariesSnapshot.value as Map).forEach((key, row) {
-        if (!boundaryIds.contains(key.toString()) || row is! Map) {
+        if (row is! Map) {
           return;
         }
         final assigned = <String>[];
@@ -319,9 +319,17 @@ class RbacRepository {
             }
           });
         }
+
+        final id = key.toString();
+        final assignedByIds = boundaryIds.contains(id);
+        final assignedByBoundary = assigned.contains(clientUid);
+        if (!assignedByIds && !assignedByBoundary) {
+          return;
+        }
+
         boundaries.add(
           ManagedBoundary(
-            id: key.toString(),
+            id: id,
             adminId: adminId,
             farmId: (row['farmId'] ?? '').toString(),
             farmName: (row['farmName'] ?? 'Unassigned Farm').toString(),

@@ -38,8 +38,13 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   final List<LatLng> _routePoints = <LatLng>[];
   GoogleMapController? _mapController;
   Timer? _assignmentRefreshTimer;
+  Timer? _breachBlinkTimer;
   DateTime _lastBoundaryAlertAt = DateTime.fromMillisecondsSinceEpoch(0);
   bool _startPositionPushed = false;
+  bool _outsideSafeZone = false;
+  bool _blinkPhase = false;
+  String _boundaryStateLabel = 'Boundary status unknown';
+  Color _boundaryStateColor = Colors.orange;
 
   @override
   void initState() {
@@ -54,6 +59,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     WidgetsBinding.instance.removeObserver(_lifecycleObserver);
     _positionSub?.cancel();
     _assignmentRefreshTimer?.cancel();
+    _breachBlinkTimer?.cancel();
     _mapController?.dispose();
     super.dispose();
   }
@@ -242,6 +248,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     final point = GeoPoint(pos.latitude, pos.longitude);
     var hasSafe = false;
     var insideSafe = false;
+    final safeBoundaryNames = <String>[];
 
     for (final boundary in _boundaries) {
       final inside = GeofenceService.isInside(
@@ -250,6 +257,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
       );
       if (!boundary.isRestricted) {
         hasSafe = true;
+        safeBoundaryNames.add(boundary.name);
         if (inside) {
           insideSafe = true;
         }
@@ -272,14 +280,84 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     if (hasSafe) {
       final wasInside = _wasInsideSafe ?? true;
       if (wasInside && !insideSafe) {
+        final boundariesLabel = safeBoundaryNames.isEmpty
+            ? 'assigned safe boundary'
+            : safeBoundaryNames.join(', ');
         await _sendBoundaryAlert(
           type: 'SAFE_ZONE_EXIT',
-          message: 'Client exited assigned safe boundary',
+          message:
+              'Bovine Track Alert: ${_clientDisplayName()} is outside boundary: $boundariesLabel.',
           lat: pos.latitude,
           lng: pos.longitude,
         );
       }
       _wasInsideSafe = insideSafe;
+      _setSafeZoneBreach(!insideSafe);
+      if (insideSafe) {
+        _boundaryStateLabel = 'Inside safe zone';
+        _boundaryStateColor = Colors.green;
+      } else {
+        _boundaryStateLabel = 'Outside safe zone';
+        _boundaryStateColor = Colors.orange;
+      }
+    } else {
+      _setSafeZoneBreach(false);
+      _boundaryStateLabel = 'No safe boundary assigned';
+      _boundaryStateColor = Colors.blueGrey;
+    }
+
+    for (final boundary in _boundaries) {
+      final inside = GeofenceService.isInside(
+        point,
+        boundary.toGeofenceModel(),
+      );
+      if (boundary.isRestricted && inside) {
+        _boundaryStateLabel = 'Inside restricted zone: ${boundary.name}';
+        _boundaryStateColor = Colors.red;
+        break;
+      }
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  String _clientDisplayName() {
+    final user = _rbac.currentUser;
+    if (user?.displayName?.trim().isNotEmpty == true) {
+      return user!.displayName!.trim();
+    }
+    if (user?.email?.contains('@') == true) {
+      return user!.email!.split('@').first;
+    }
+    return 'Client';
+  }
+
+  void _setSafeZoneBreach(bool breached) {
+    if (_outsideSafeZone == breached) {
+      return;
+    }
+    _outsideSafeZone = breached;
+
+    _breachBlinkTimer?.cancel();
+    if (breached) {
+      _breachBlinkTimer = Timer.periodic(const Duration(milliseconds: 550), (
+        _,
+      ) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _blinkPhase = !_blinkPhase;
+        });
+      });
+    } else {
+      _blinkPhase = false;
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -377,6 +455,26 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_outsideSafeZone)
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _blinkPhase
+                      ? const Color(0xFFFFB300)
+                      : const Color(0xFFD32F2F),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'Warning: Device is outside safe zone!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
             Container(
               height: 260,
               clipBehavior: Clip.antiAlias,
@@ -421,10 +519,20 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
                             .toList(),
                         strokeColor: boundary.isRestricted
                             ? Colors.red
-                            : Colors.green,
+                            : (_outsideSafeZone
+                                  ? (_blinkPhase
+                                        ? const Color(0xFFFFB300)
+                                        : const Color(0xFFD32F2F))
+                                  : Colors.green),
                         strokeWidth: 3,
                         fillColor:
-                            (boundary.isRestricted ? Colors.red : Colors.green)
+                            (boundary.isRestricted
+                                    ? Colors.red
+                                    : (_outsideSafeZone
+                                          ? (_blinkPhase
+                                                ? const Color(0xFFFFB300)
+                                                : const Color(0xFFD32F2F))
+                                          : Colors.green))
                                 .withValues(alpha: 0.12),
                       ),
                 },
@@ -441,6 +549,22 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Icon(Icons.shield, color: _boundaryStateColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _boundaryStateLabel,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: _boundaryStateColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Text(
                     'Status: $_status',
                     style: Theme.of(context).textTheme.titleLarge,
@@ -485,12 +609,8 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
             Text(
               _adminUid.isEmpty
                   ? 'No admin assignment found yet.'
-                  : 'Assigned by admin: $_adminUid | Boundaries: ${_boundaries.length}',
+                  : 'Assigned boundaries: ${_boundaries.length}',
               style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Lifecycle Controller active: app state changes trigger pending-sync safeguards.',
             ),
           ],
         ),
