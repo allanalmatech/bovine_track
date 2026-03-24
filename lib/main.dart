@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'firebase_options.dart';
 import 'screens/auth_gate_screen.dart';
+import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/server_dashboard_screen.dart';
@@ -14,6 +15,10 @@ import 'screens/hardware_diagnostic_screen.dart';
 import 'screens/network_monitor_screen.dart';
 import 'screens/map_tracking_screen.dart';
 import 'screens/farms_screen.dart';
+import 'screens/alerts_screen.dart';
+import 'screens/app_settings_screen.dart';
+import 'screens/boundary_assignments_screen.dart';
+import 'screens/fences_screen.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -43,8 +48,9 @@ class BovineTrackApp extends StatelessWidget {
       title: 'BovineTrack',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const AuthGateScreen(),
+      home: const SplashScreen(),
       routes: {
+        '/auth': (context) => const AuthGateScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
         '/dashboard': (context) => const ServerDashboardScreen(),
         '/devices': (context) => const DeviceListScreen(),
@@ -54,6 +60,10 @@ class BovineTrackApp extends StatelessWidget {
         '/network': (context) => const NetworkMonitorScreen(),
         '/map-tracking': (context) => const MapTrackingScreen(),
         '/farms': (context) => const FarmsScreen(),
+        '/alerts': (context) => const AlertsScreen(),
+        '/settings': (context) => const AppSettingsScreen(),
+        '/boundary-assignments': (context) => const BoundaryAssignmentsScreen(),
+        '/fences': (context) => const FencesScreen(),
       },
     );
   }

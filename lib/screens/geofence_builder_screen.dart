@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../data/tracking_repository.dart';
@@ -27,8 +28,17 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
   String? _selectedFarmId;
   final Set<String> _selectedClientIds = <String>{};
   final List<LatLng> _pickedPoints = <LatLng>[];
+  GoogleMapController? _mapController;
 
-  static const LatLng _defaultCenter = LatLng(-1.2921, 36.8219);
+  static const LatLng _defaultCenter = LatLng(-0.6072, 30.6545);
+
+  LatLng get _currentFarmCenter {
+    final selected = _farms.where((f) => f.id == _selectedFarmId).toList();
+    if (selected.isNotEmpty) {
+      return LatLng(selected.first.centerLat, selected.first.centerLng);
+    }
+    return _defaultCenter;
+  }
 
   @override
   void initState() {
@@ -69,6 +79,7 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
 
   @override
   void dispose() {
+    _mapController?.dispose();
     _nameCtrl.dispose();
     _coordsCtrl.dispose();
     super.dispose();
@@ -157,11 +168,61 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
     });
   }
 
+  Future<void> _moveToCurrentLocation({bool addAsPoint = false}) async {
+    try {
+      final enabled = await Geolocator.isLocationServiceEnabled();
+      if (!enabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Enable location services first.')),
+          );
+        }
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission is required.')),
+          );
+        }
+        return;
+      }
+
+      final current = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      final target = LatLng(current.latitude, current.longitude);
+      await _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: target, zoom: 16),
+        ),
+      );
+
+      if (addAsPoint) {
+        _addPoint(target);
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unable to get current location.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Create Virtual Fence')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -185,6 +246,22 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
                 setState(() {
                   _selectedFarmId = value;
                 });
+                if (value != null) {
+                  final selected = _farms.where((f) => f.id == value).toList();
+                  if (selected.isNotEmpty) {
+                    _mapController?.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: LatLng(
+                            selected.first.centerLat,
+                            selected.first.centerLng,
+                          ),
+                          zoom: 15,
+                        ),
+                      ),
+                    );
+                  }
+                }
               },
             ),
             const SizedBox(height: 10),
@@ -196,10 +273,14 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
               ),
               clipBehavior: Clip.antiAlias,
               child: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: _defaultCenter,
+                key: ValueKey(_selectedFarmId ?? 'default_farm_map'),
+                initialCameraPosition: CameraPosition(
+                  target: _currentFarmCenter,
                   zoom: 14,
                 ),
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
                 onTap: _addPoint,
                 markers: {
                   for (var i = 0; i < _pickedPoints.length; i++)
@@ -238,6 +319,26 @@ class _GeofenceBuilderScreenState extends State<GeofenceBuilderScreen> {
                     onPressed: _pickedPoints.isEmpty ? null : _clearPoints,
                     icon: const Icon(Icons.delete_outline),
                     label: const Text('Clear Points'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _moveToCurrentLocation(addAsPoint: false),
+                    icon: const Icon(Icons.my_location),
+                    label: const Text('Go to Current Location'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _moveToCurrentLocation(addAsPoint: true),
+                    icon: const Icon(Icons.add_location_alt),
+                    label: const Text('Add Current as Point'),
                   ),
                 ),
               ],

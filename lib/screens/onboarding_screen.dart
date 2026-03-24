@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildCompatibilityCheck() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required String description,
     required IconData icon,
   }) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -171,7 +171,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildRoleSelection() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

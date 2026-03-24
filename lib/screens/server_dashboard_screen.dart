@@ -6,7 +6,12 @@ import '../models/alert_model.dart';
 import '../models/rbac_models.dart';
 import '../services/rbac_repository.dart';
 import '../theme/app_theme.dart';
+import 'alerts_screen.dart';
+import 'app_settings_screen.dart';
+import 'boundary_assignments_screen.dart';
+import 'client_profile_screen.dart';
 import 'device_list_screen.dart';
+import 'fences_screen.dart';
 import 'farms_screen.dart';
 import 'geofence_builder_screen.dart';
 
@@ -21,12 +26,18 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
   final RbacRepository _rbac = RbacRepository.instance;
   List<AlertModel> _alerts = const [];
   List<ManagedClient> _clients = const [];
+  List<TrackedDevice> _devices = const [];
   int _fenceCount = 0;
   String _adminUid = '';
   bool _loading = true;
   StreamSubscription<List<ManagedClient>>? _clientsSub;
   StreamSubscription<List<AlertModel>>? _alertsSub;
   StreamSubscription<List<ManagedBoundary>>? _boundariesSub;
+  StreamSubscription<List<TrackedDevice>>? _devicesSub;
+  StreamSubscription<Map<String, Map<String, dynamic>>>? _latestLocSub;
+  StreamSubscription<Map<String, Map<String, dynamic>>>? _statusSub;
+  Map<String, Map<String, dynamic>> _latestByClient = const {};
+  Map<String, Map<String, dynamic>> _statusByClient = const {};
 
   @override
   void initState() {
@@ -41,6 +52,9 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
     _clientsSub?.cancel();
     _alertsSub?.cancel();
     _boundariesSub?.cancel();
+    _devicesSub?.cancel();
+    _latestLocSub?.cancel();
+    _statusSub?.cancel();
     super.dispose();
   }
 
@@ -76,6 +90,35 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
       setState(() {
         _fenceCount = zones.length;
         _loading = false;
+      });
+    });
+
+    _devicesSub = _rbac.watchAdminDevices(_adminUid).listen((devices) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _devices = devices;
+      });
+    });
+
+    _latestLocSub = _rbac.watchLatestLocationsByClient(_adminUid).listen((
+      rows,
+    ) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _latestByClient = rows;
+      });
+    });
+
+    _statusSub = _rbac.watchClientStatusByClient(_adminUid).listen((rows) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _statusByClient = rows;
       });
     });
   }
@@ -167,13 +210,19 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = _rbac.currentUser;
     return Scaffold(
+      drawer: _buildMenuDrawer(),
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.primary),
-          onPressed: () {},
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu, color: AppColors.primary),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            );
+          },
         ),
         title: const Text(
           'BovineTrack',
@@ -193,12 +242,16 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: AppColors.primaryContainer,
-              child: const Icon(
-                Icons.person,
-                color: AppColors.onPrimaryContainer,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () => _showProfileMenu(context),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: AppColors.primaryContainer,
+                child: const Icon(
+                  Icons.person,
+                  color: AppColors.onPrimaryContainer,
+                ),
               ),
             ),
           ),
@@ -223,6 +276,11 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
               style: Theme.of(
                 context,
               ).textTheme.displayLarge?.copyWith(fontSize: 48),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              user?.email ?? 'admin',
+              style: const TextStyle(color: AppColors.onSurfaceVariant),
             ),
             const SizedBox(height: 32),
             Row(
@@ -255,63 +313,6 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const DeviceListScreen()),
-                  );
-                },
-                icon: const Icon(Icons.sensors),
-                label: const Text('Open Devices Manager'),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FarmsScreen()),
-                  );
-                },
-                icon: const Icon(Icons.agriculture),
-                label: const Text('Manage Farms'),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.pushNamed(context, '/hardware'),
-                    icon: const Icon(Icons.memory),
-                    label: const Text('Hardware'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.pushNamed(context, '/network'),
-                    icon: const Icon(Icons.network_check),
-                    label: const Text('Network'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/map-tracking'),
-                    icon: const Icon(Icons.map),
-                    label: const Text('Map'),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 24),
             _buildClientStrip(),
             const SizedBox(height: 24),
@@ -339,6 +340,23 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
   }
 
   Widget _buildStatsGrid() {
+    final liveFleet = _clients.where((c) => c.active).length;
+    final urgent = _alerts.length;
+    final mapping = _fenceCount;
+    final onlineNow = _clients.where((c) {
+      final ts = (_latestByClient[c.uid]?['timestamp'] as num?)?.toInt();
+      if (ts == null) {
+        return false;
+      }
+      return DateTime.now()
+              .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+              .inMinutes <=
+          2;
+    }).length;
+    final optimal = _clients.isEmpty
+        ? 100
+        : ((onlineNow / _clients.length) * 100).round();
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -350,42 +368,73 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
         _buildStatCard(
           icon: Icons.memory,
           label: 'Live Fleet',
-          value: '${_clients.where((c) => c.active).length}',
+          value: '$liveFleet',
           subLabel: 'Connected Devices',
           color: AppColors.surfaceContainerLow,
           iconColor: AppColors.primary,
           iconBg: AppColors.primaryFixed,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DeviceListScreen()),
+            );
+          },
         ),
         _buildStatCard(
           icon: Icons.notifications_active,
           label: 'Urgent',
-          value: '${_alerts.length}',
+          value: '$urgent',
           subLabel: 'Active Alerts',
           color: AppColors.errorContainer,
           iconColor: AppColors.errorContainer,
           iconBg: AppColors.onErrorContainer,
           textColor: AppColors.onErrorContainer,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AlertsScreen()),
+            );
+          },
         ),
         _buildStatCard(
           icon: Icons.polyline,
           label: 'Mapping',
-          value: '$_fenceCount',
+          value: '$mapping',
           subLabel: 'Zones Created',
           color: AppColors.secondaryContainer,
           iconColor: AppColors.secondaryContainer,
           iconBg: AppColors.onSecondaryContainer,
           textColor: AppColors.onSecondaryContainer,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FarmsScreen()),
+            );
+          },
         ),
         _buildStatCard(
           icon: Icons.bolt,
           label: 'Optimal',
-          value: '98%',
+          value: '$optimal%',
           subLabel: 'System Uptime',
           color: AppColors.primaryContainer,
           iconColor: AppColors.primary,
           iconBg: AppColors.primaryFixed,
           textColor: AppColors.primaryFixed,
           isDark: true,
+          onTap: () {
+            showDialog<void>(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('System Health'),
+                  content: Text(
+                    'Online clients: $onlineNow / ${_clients.length}\nScore: $optimal%',
+                  ),
+                );
+              },
+            );
+          },
         ),
       ],
     );
@@ -410,7 +459,7 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
       spacing: 8,
       runSpacing: 8,
       children: _clients.take(8).map((client) {
-        return Chip(
+        return ActionChip(
           backgroundColor: client.active
               ? AppColors.primaryFixed
               : AppColors.errorContainer,
@@ -419,6 +468,15 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
             client.active ? Icons.sensors : Icons.sensors_off,
             size: 16,
           ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ClientProfileScreen(adminUid: _adminUid, client: client),
+              ),
+            );
+          },
         );
       }).toList(),
     );
@@ -434,126 +492,160 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
     required Color iconBg,
     Color? textColor,
     bool isDark = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  shape: BoxShape.circle,
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
-              ),
-              Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
-                  color: textColor ?? AppColors.onSurfaceVariant,
+                Text(
+                  label.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                    color: textColor ?? AppColors.onSurfaceVariant,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontWeight: FontWeight.w900,
-                  fontSize: 32,
-                  color: textColor ?? AppColors.primary,
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: 'Manrope',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 32,
+                    color: textColor ?? AppColors.primary,
+                  ),
                 ),
-              ),
-              Text(
-                subLabel,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color:
-                      textColor?.withValues(alpha: 0.8) ??
-                      AppColors.onSurfaceVariant,
+                Text(
+                  subLabel,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color:
+                        textColor?.withValues(alpha: 0.8) ??
+                        AppColors.onSurfaceVariant,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMapPreview() {
-    return Container(
-      height: 300,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(32),
-        image: const DecorationImage(
-          image: NetworkImage(
-            'https://placeholder.com/map',
-          ), // Placeholder for map
-          fit: BoxFit.cover,
+    final trackedClientIds = _devices.map((d) => d.clientUid).toSet();
+    final liveMarkers = trackedClientIds.where((id) {
+      final latest = _latestByClient[id];
+      return latest != null;
+    }).length;
+    final activeNow = trackedClientIds.where((clientUid) {
+      final status = _statusByClient[clientUid];
+      final latest = _latestByClient[clientUid];
+      final ts =
+          (status?['lastSeen'] as num?)?.toInt() ??
+          (latest?['timestamp'] as num?)?.toInt();
+      if (ts == null) {
+        return false;
+      }
+      return DateTime.now()
+              .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+              .inMinutes <=
+          2;
+    }).length;
+    final maintenance = (trackedClientIds.length - activeNow).clamp(0, 999);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(32),
+      onTap: () => Navigator.pushNamed(context, '/map-tracking'),
+      child: Container(
+        height: 300,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.surfaceContainer, AppColors.surfaceContainerLow],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(32),
         ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 20,
-            left: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 20,
+              left: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Live Herd Positions',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      '$liveMarkers latest telemetry points',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              child: Row(
                 children: [
-                  Text(
-                    'Live Herd Positions',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  Text(
-                    'North Pasture Sector 4',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.onSurfaceVariant,
-                    ),
+                  _buildMapChip('$activeNow Active', AppColors.primaryFixed),
+                  const SizedBox(width: 8),
+                  _buildMapChip(
+                    '$maintenance Maintenance',
+                    AppColors.tertiaryFixed,
                   ),
                 ],
               ),
             ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Row(
-              children: [
-                _buildMapChip('12 Cattle Active', AppColors.primaryFixed),
-                const SizedBox(width: 8),
-                _buildMapChip('2 Maintenance', AppColors.tertiaryFixed),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -617,7 +709,12 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AlertsScreen()),
+                );
+              },
               child: const Text(
                 'View All',
                 style: TextStyle(fontWeight: FontWeight.w700),
@@ -717,22 +814,168 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
             Navigator.pushNamed(context, '/map-tracking');
           }),
           _buildNavItem(Icons.notifications, 'Alerts', false, () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Alerts are visible on this dashboard in real time.',
-                ),
-              ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AlertsScreen()),
             );
           }),
           _buildNavItem(Icons.settings, 'Settings', false, () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const FarmsScreen()),
+              MaterialPageRoute(builder: (_) => const AppSettingsScreen()),
             );
           }),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuDrawer() {
+    return Drawer(
+      child: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'BovineTrack Menu',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Open modules from here to keep dashboard clean.'),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.agriculture),
+              title: const Text('Farms'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FarmsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.sensors),
+              title: const Text('Devices Manager'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DeviceListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.map),
+              title: const Text('Interactive Map'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/map-tracking');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.assignment_turned_in),
+              title: const Text('Boundary Assignments'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BoundaryAssignmentsScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.polyline),
+              title: const Text('Fences / Boundaries'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FencesScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.memory),
+              title: const Text('Hardware Diagnostic'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/hardware');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.network_check),
+              title: const Text('Connectivity Manager'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/network');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('App Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AppSettingsScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showProfileMenu(BuildContext context) {
+    final user = _rbac.currentUser;
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Profile',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Text(user?.email ?? 'Unknown user'),
+                const SizedBox(height: 2),
+                Text(
+                  'UID: ${user?.uid ?? '--'}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await _rbac.signOut();
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Sign Out'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -8,6 +8,8 @@ class AlertModel {
     required this.lng,
     required this.createdAt,
     required this.synced,
+    this.remoteKey,
+    this.resolved = false,
   });
 
   final int? id;
@@ -18,6 +20,8 @@ class AlertModel {
   final double lng;
   final DateTime createdAt;
   final bool synced;
+  final String? remoteKey;
+  final bool resolved;
 
   factory AlertModel.fromMap(Map<String, Object?> map) {
     return AlertModel(
@@ -29,6 +33,7 @@ class AlertModel {
       lng: (map['lng'] as num).toDouble(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
       synced: (map['synced'] as int) == 1,
+      resolved: (map['resolved'] as int? ?? 0) == 1,
     );
   }
 
@@ -42,6 +47,7 @@ class AlertModel {
       'lng': lng,
       'created_at': createdAt.millisecondsSinceEpoch,
       'synced': synced ? 1 : 0,
+      'resolved': resolved ? 1 : 0,
     };
   }
 }

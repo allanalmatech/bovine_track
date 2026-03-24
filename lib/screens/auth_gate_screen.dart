@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../services/rbac_repository.dart';
+import '../services/admin_alert_notification_service.dart';
 import 'client_tracking_screen.dart';
 import 'login_screen.dart';
 import 'server_dashboard_screen.dart';
@@ -38,29 +39,31 @@ class AuthGateScreen extends StatelessWidget {
 
         if (permissionSnap.data != true) {
           return Scaffold(
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'BovineTrack requires Location, Notifications, and SMS permissions to operate.',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        (context as Element).markNeedsBuild();
-                      },
-                      child: const Text('Grant Permissions'),
-                    ),
-                    const SizedBox(height: 8),
-                    OutlinedButton(
-                      onPressed: openAppSettings,
-                      child: const Text('Open App Settings'),
-                    ),
-                  ],
+            body: SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'BovineTrack requires Location, Notifications, and SMS permissions to operate.',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          (context as Element).markNeedsBuild();
+                        },
+                        child: const Text('Grant Permissions'),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton(
+                        onPressed: openAppSettings,
+                        child: const Text('Open App Settings'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -78,6 +81,7 @@ class AuthGateScreen extends StatelessWidget {
 
             final user = authSnap.data;
             if (user == null) {
+              AdminAlertNotificationService.instance.stop();
               return const LoginScreen();
             }
 
@@ -93,19 +97,22 @@ class AuthGateScreen extends StatelessWidget {
                 }
                 if (roleSnap.hasError) {
                   return Scaffold(
-                    body: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Failed loading role: ${roleSnap.error}'),
-                            const SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () => FirebaseAuth.instance.signOut(),
-                              child: const Text('Sign Out'),
-                            ),
-                          ],
+                    body: SingleChildScrollView(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Failed loading role: ${roleSnap.error}'),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    FirebaseAuth.instance.signOut(),
+                                child: const Text('Sign Out'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -113,54 +120,61 @@ class AuthGateScreen extends StatelessWidget {
                 }
                 final role = roleSnap.data;
                 if (role == 'admin') {
+                  AdminAlertNotificationService.instance.start(user.uid);
                   return const ServerDashboardScreen();
                 }
                 if (role == 'client') {
+                  AdminAlertNotificationService.instance.stop();
                   return const ClientTrackingScreen();
                 }
 
                 return Scaffold(
-                  body: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Account has no RBAC role assigned in /users/{uid}/role.',
-                          ),
-                          const SizedBox(height: 8),
-                          Text('UID: ${user.uid}', textAlign: TextAlign.center),
-                          const SizedBox(height: 14),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  await RbacRepository.instance.setOwnRole(
-                                    'admin',
-                                  );
-                                },
-                                child: const Text('Set as Admin'),
-                              ),
-                              OutlinedButton(
-                                onPressed: () async {
-                                  await RbacRepository.instance.setOwnRole(
-                                    'client',
-                                  );
-                                },
-                                child: const Text('Set as Client'),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () => FirebaseAuth.instance.signOut(),
-                            child: const Text('Sign Out'),
-                          ),
-                        ],
+                  body: SingleChildScrollView(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Account has no RBAC role assigned in /users/{uid}/role.',
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'UID: ${user.uid}',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 14),
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await RbacRepository.instance.setOwnRole(
+                                      'admin',
+                                    );
+                                  },
+                                  child: const Text('Set as Admin'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    await RbacRepository.instance.setOwnRole(
+                                      'client',
+                                    );
+                                  },
+                                  child: const Text('Set as Client'),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () => FirebaseAuth.instance.signOut(),
+                              child: const Text('Sign Out'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

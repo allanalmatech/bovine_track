@@ -81,7 +81,10 @@ class RbacRepository {
     });
   }
 
-  Stream<List<AlertModel>> watchAdminAlerts(String adminUid) {
+  Stream<List<AlertModel>> watchAdminAlerts(
+    String adminUid, {
+    bool includeResolved = false,
+  }) {
     return _db
         .ref('alerts/$adminUid')
         .orderByChild('timestamp')
@@ -93,7 +96,7 @@ class RbacRepository {
             return <AlertModel>[];
           }
           final out = <AlertModel>[];
-          value.forEach((_, row) {
+          value.forEach((key, row) {
             if (row is Map) {
               out.add(
                 AlertModel(
@@ -108,10 +111,15 @@ class RbacRepository {
                         DateTime.now().millisecondsSinceEpoch,
                   ),
                   synced: true,
+                  remoteKey: key.toString(),
+                  resolved: row['resolved'] == true,
                 ),
               );
             }
           });
+          if (!includeResolved) {
+            out.removeWhere((a) => a.resolved);
+          }
           out.sort((a, b) => b.createdAt.compareTo(a.createdAt));
           return out;
         });
@@ -347,6 +355,13 @@ class RbacRepository {
     };
     await _db.ref('locations/$adminUid/$clientUid').push().set(payload);
     await _db.ref('locationsLatest/$adminUid/$clientUid').set(payload);
+    await _db.ref('clientStatus/$adminUid/$clientUid').set({
+      'lastSeen': ServerValue.timestamp,
+      'lat': lat,
+      'lng': lng,
+      'speed': speed,
+      'online': true,
+    });
   }
 
   Future<void> publishBoundaryAlert({
@@ -364,8 +379,44 @@ class RbacRepository {
       'lat': lat,
       'lng': lng,
       'source': 'client',
+      'resolved': false,
       'timestamp': ServerValue.timestamp,
     });
+  }
+
+  Future<void> setAlertResolved({
+    required String adminUid,
+    required String alertKey,
+    required bool resolved,
+  }) async {
+    await _db.ref('alerts/$adminUid/$alertKey').update({
+      'resolved': resolved,
+      'resolvedAt': resolved ? ServerValue.timestamp : null,
+    });
+  }
+
+  Future<void> resolveAllAlerts(String adminUid) async {
+    final snap = await _db.ref('alerts/$adminUid').get();
+    if (snap.value is! Map) {
+      return;
+    }
+    final updates = <String, dynamic>{};
+    (snap.value as Map).forEach((key, _) {
+      updates['$key/resolved'] = true;
+      updates['$key/resolvedAt'] = ServerValue.timestamp;
+    });
+    await _db.ref('alerts/$adminUid').update(updates);
+  }
+
+  Future<void> clearAlert({
+    required String adminUid,
+    required String alertKey,
+  }) async {
+    await _db.ref('alerts/$adminUid/$alertKey').remove();
+  }
+
+  Future<void> clearAllAlerts(String adminUid) async {
+    await _db.ref('alerts/$adminUid').remove();
   }
 
   Stream<List<TrackedDevice>> watchAdminDevices(String adminUid) {
@@ -399,6 +450,25 @@ class RbacRepository {
     String adminUid,
   ) {
     return _db.ref('locationsLatest/$adminUid').onValue.map((event) {
+      final value = event.snapshot.value;
+      final out = <String, Map<String, dynamic>>{};
+      if (value is Map) {
+        value.forEach((key, row) {
+          if (row is Map) {
+            out[key.toString()] = Map<String, dynamic>.from(
+              row.map((k, v) => MapEntry(k.toString(), v)),
+            );
+          }
+        });
+      }
+      return out;
+    });
+  }
+
+  Stream<Map<String, Map<String, dynamic>>> watchClientStatusByClient(
+    String adminUid,
+  ) {
+    return _db.ref('clientStatus/$adminUid').onValue.map((event) {
       final value = event.snapshot.value;
       final out = <String, Map<String, dynamic>>{};
       if (value is Map) {
@@ -466,6 +536,8 @@ class RbacRepository {
               id: key.toString(),
               name: (row['name'] ?? '').toString(),
               locationHint: (row['locationHint'] ?? '').toString(),
+              centerLat: (row['centerLat'] as num?)?.toDouble() ?? -0.6072,
+              centerLng: (row['centerLng'] as num?)?.toDouble() ?? 30.6545,
               active: row['active'] != false,
             ),
           );
@@ -480,14 +552,44 @@ class RbacRepository {
     required String adminUid,
     required String name,
     required String locationHint,
+    required double centerLat,
+    required double centerLng,
   }) async {
     final ref = _db.ref('farms/$adminUid').push();
     await ref.set({
       'name': name.trim(),
       'locationHint': locationHint.trim(),
+      'centerLat': centerLat,
+      'centerLng': centerLng,
       'active': true,
       'createdAt': ServerValue.timestamp,
     });
+  }
+
+  Future<void> updateFarm({
+    required String adminUid,
+    required String farmId,
+    required String name,
+    required String locationHint,
+    required double centerLat,
+    required double centerLng,
+    required bool active,
+  }) async {
+    await _db.ref('farms/$adminUid/$farmId').update({
+      'name': name.trim(),
+      'locationHint': locationHint.trim(),
+      'centerLat': centerLat,
+      'centerLng': centerLng,
+      'active': active,
+      'updatedAt': ServerValue.timestamp,
+    });
+  }
+
+  Future<void> deleteFarm({
+    required String adminUid,
+    required String farmId,
+  }) async {
+    await _db.ref('farms/$adminUid/$farmId').remove();
   }
 
   Future<void> addTrackedDevice({
@@ -516,5 +618,60 @@ class RbacRepository {
     await _db.ref('clientAssignments/$trimmedClient').update({
       'adminId': adminUid,
     });
+  }
+
+  Future<void> setBoundaryAssignment({
+    required String adminUid,
+    required String boundaryId,
+    required String clientUid,
+    required bool assigned,
+  }) async {
+    final boundaryRef = _db.ref(
+      'boundaries/$adminUid/$boundaryId/assignedClients/$clientUid',
+    );
+    final assignmentRef = _db.ref(
+      'clientAssignments/$clientUid/boundaryIds/$boundaryId',
+    );
+
+    if (assigned) {
+      await boundaryRef.set(true);
+      await _db.ref('clientAssignments/$clientUid/adminId').set(adminUid);
+      await assignmentRef.set(true);
+    } else {
+      await boundaryRef.remove();
+      await assignmentRef.remove();
+    }
+  }
+
+  Future<void> updateBoundary({
+    required String adminUid,
+    required String boundaryId,
+    required String name,
+    required String farmId,
+    required String farmName,
+    required String verticesText,
+    required bool isRestricted,
+  }) async {
+    await _db.ref('boundaries/$adminUid/$boundaryId').update({
+      'name': name,
+      'farmId': farmId,
+      'farmName': farmName,
+      'vertices': verticesText,
+      'isRestricted': isRestricted,
+      'updatedAt': ServerValue.timestamp,
+    });
+  }
+
+  Future<void> deleteBoundary({
+    required String adminUid,
+    required String boundaryId,
+    required List<String> assignedClientIds,
+  }) async {
+    await _db.ref('boundaries/$adminUid/$boundaryId').remove();
+    for (final clientUid in assignedClientIds) {
+      await _db
+          .ref('clientAssignments/$clientUid/boundaryIds/$boundaryId')
+          .remove();
+    }
   }
 }

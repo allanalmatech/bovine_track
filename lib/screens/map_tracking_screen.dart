@@ -88,7 +88,7 @@ class _MapTrackingScreenState extends State<MapTrackingScreen> {
                     );
                   }
 
-                  const fallback = LatLng(-1.2921, 36.8219);
+                  const fallback = LatLng(-0.6072, 30.6545);
                   final center = markers.isNotEmpty
                       ? markers.first.position
                       : fallback;

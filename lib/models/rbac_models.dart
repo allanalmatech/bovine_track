@@ -46,12 +46,16 @@ class FarmModel {
     required this.id,
     required this.name,
     required this.locationHint,
+    required this.centerLat,
+    required this.centerLng,
     required this.active,
   });
 
   final String id;
   final String name;
   final String locationHint;
+  final double centerLat;
+  final double centerLng;
   final bool active;
 }
 
