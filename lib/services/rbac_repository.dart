@@ -353,23 +353,132 @@ class RbacRepository {
     required double lat,
     required double lng,
     required double speed,
+    required double accuracy,
+    required int battery,
+    required String network,
+    required int sessionStartedAt,
   }) async {
+    final nowClient = DateTime.now().millisecondsSinceEpoch;
     final payload = {
       'clientUid': clientUid,
       'lat': lat,
       'lng': lng,
       'speed': speed,
+      'accuracy': accuracy,
+      'battery': battery,
+      'network': network,
+      'clientTimestamp': nowClient,
       'timestamp': ServerValue.timestamp,
     };
-    await _db.ref('locations/$adminUid/$clientUid').push().set(payload);
-    await _db.ref('locationsLatest/$adminUid/$clientUid').set(payload);
-    await _db.ref('clientStatus/$adminUid/$clientUid').set({
-      'lastSeen': ServerValue.timestamp,
-      'lat': lat,
-      'lng': lng,
-      'speed': speed,
-      'online': true,
+    try {
+      await _db.ref('locations/$adminUid/$clientUid').push().set(payload);
+      await _db.ref('locationsLatest/$adminUid/$clientUid').set(payload);
+      await _db.ref('clientStatus/$adminUid/$clientUid').set({
+        'lastSeen': ServerValue.timestamp,
+        'clientTimestamp': nowClient,
+        'lat': lat,
+        'lng': lng,
+        'speed': speed,
+        'accuracy': accuracy,
+        'battery': battery,
+        'network': network,
+        'sessionStartedAt': sessionStartedAt,
+        'online': true,
+      });
+    } catch (_) {
+      final legacyPayload = {
+        'clientUid': clientUid,
+        'lat': lat,
+        'lng': lng,
+        'speed': speed,
+        'clientTimestamp': nowClient,
+        'timestamp': ServerValue.timestamp,
+      };
+      await _db.ref('locations/$adminUid/$clientUid').push().set(legacyPayload);
+      await _db.ref('locationsLatest/$adminUid/$clientUid').set(legacyPayload);
+      await _db.ref('clientStatus/$adminUid/$clientUid').set({
+        'lastSeen': ServerValue.timestamp,
+        'clientTimestamp': nowClient,
+        'lat': lat,
+        'lng': lng,
+        'speed': speed,
+        'sessionStartedAt': sessionStartedAt,
+        'online': true,
+      });
+    }
+  }
+
+  Future<void> setClientOffline({
+    required String adminUid,
+    required String clientUid,
+  }) async {
+    await _db.ref('clientStatus/$adminUid/$clientUid').update({
+      'online': false,
+      'offlineAt': ServerValue.timestamp,
+      'sessionStartedAt': null,
     });
+  }
+
+  Stream<List<Map<String, dynamic>>> watchClientLocationHistory({
+    required String adminUid,
+    required String clientUid,
+    required int sinceTimestamp,
+    int limit = 1500,
+  }) {
+    return _db
+        .ref('locations/$adminUid/$clientUid')
+        .orderByChild('timestamp')
+        .startAt(sinceTimestamp)
+        .limitToLast(limit)
+        .onValue
+        .map((event) {
+          final value = event.snapshot.value;
+          final out = <Map<String, dynamic>>[];
+          if (value is Map) {
+            value.forEach((key, row) {
+              if (row is Map) {
+                final map = Map<String, dynamic>.from(
+                  row.map((k, v) => MapEntry(k.toString(), v)),
+                );
+                map['id'] = key.toString();
+                out.add(map);
+              }
+            });
+          }
+          out.sort(
+            (a, b) => ((a['timestamp'] as num?)?.toInt() ?? 0).compareTo(
+              (b['timestamp'] as num?)?.toInt() ?? 0,
+            ),
+          );
+          return out;
+        });
+  }
+
+  Future<Map<String, dynamic>?> getClientPositionAtOrBefore({
+    required String adminUid,
+    required String clientUid,
+    required int targetTimestamp,
+  }) async {
+    final snap = await _db
+        .ref('locations/$adminUid/$clientUid')
+        .orderByChild('timestamp')
+        .endAt(targetTimestamp)
+        .limitToLast(1)
+        .get();
+    if (snap.value is! Map) {
+      return null;
+    }
+    final rows = snap.value as Map;
+    if (rows.isEmpty) {
+      return null;
+    }
+    final first = rows.values.first;
+    if (first is! Map) {
+      return null;
+    }
+    return Map<String, dynamic>.from(
+      first.map((k, v) => MapEntry(k.toString(), v)),
+    );
   }
 
   Future<void> publishBoundaryAlert({
@@ -457,39 +566,242 @@ class RbacRepository {
   Stream<Map<String, Map<String, dynamic>>> watchLatestLocationsByClient(
     String adminUid,
   ) {
-    return _db.ref('locationsLatest/$adminUid').onValue.map((event) {
-      final value = event.snapshot.value;
+    return _db.ref('locationsLatest').onValue.asyncMap((event) async {
+      final clientIds = await _loadAdminClientIds(adminUid);
+      if (clientIds.isEmpty) {
+        return <String, Map<String, dynamic>>{};
+      }
+
+      final global = event.snapshot.value;
       final out = <String, Map<String, dynamic>>{};
-      if (value is Map) {
-        value.forEach((key, row) {
-          if (row is Map) {
-            out[key.toString()] = Map<String, dynamic>.from(
+      if (global is Map) {
+        global.forEach((outerKey, outerValue) {
+          // Flat shape: locationsLatest/{clientUid}
+          if (clientIds.contains(outerKey.toString()) && outerValue is Map) {
+            out[outerKey.toString()] = Map<String, dynamic>.from(
+              outerValue.map((k, v) => MapEntry(k.toString(), v)),
+            );
+            return;
+          }
+          // Nested shape: locationsLatest/{adminUid}/{clientUid}
+          if (outerValue is! Map) {
+            return;
+          }
+          outerValue.forEach((clientUid, row) {
+            if (!clientIds.contains(clientUid.toString()) || row is! Map) {
+              return;
+            }
+            final asMap = Map<String, dynamic>.from(
               row.map((k, v) => MapEntry(k.toString(), v)),
             );
+            final existing = out[clientUid.toString()];
+            if (existing == null || _extractTs(asMap) > _extractTs(existing)) {
+              out[clientUid.toString()] = asMap;
+            }
+          });
+        });
+      }
+      if (out.isNotEmpty) {
+        return out;
+      }
+
+      // Fallback: build latest rows from admin-scoped history path.
+      final historySnap = await _db.ref('locations/$adminUid').get();
+      final historyOut = <String, Map<String, dynamic>>{};
+      if (historySnap.value is Map) {
+        (historySnap.value as Map).forEach((clientUid, clientRowsRaw) {
+          if (!clientIds.contains(clientUid.toString()) ||
+              clientRowsRaw is! Map) {
+            return;
+          }
+          Map<String, dynamic>? newest;
+          int newestTs = -1;
+          clientRowsRaw.forEach((_, row) {
+            if (row is! Map) {
+              return;
+            }
+            final asMap = Map<String, dynamic>.from(
+              row.map((k, v) => MapEntry(k.toString(), v)),
+            );
+            final ts = _extractTs(asMap);
+            if (ts > newestTs) {
+              newestTs = ts;
+              newest = asMap;
+            }
+          });
+          if (newest != null) {
+            historyOut[clientUid.toString()] = newest!;
           }
         });
       }
-      return out;
+      if (historyOut.isNotEmpty) {
+        return historyOut;
+      }
+      return _fallbackLatestFromAnyAdmin(adminUid);
     });
   }
 
   Stream<Map<String, Map<String, dynamic>>> watchClientStatusByClient(
     String adminUid,
   ) {
-    return _db.ref('clientStatus/$adminUid').onValue.map((event) {
-      final value = event.snapshot.value;
+    return _db.ref('clientStatus').onValue.asyncMap((event) async {
+      final clientIds = await _loadAdminClientIds(adminUid);
+      if (clientIds.isEmpty) {
+        return <String, Map<String, dynamic>>{};
+      }
+
+      final global = event.snapshot.value;
       final out = <String, Map<String, dynamic>>{};
-      if (value is Map) {
-        value.forEach((key, row) {
-          if (row is Map) {
-            out[key.toString()] = Map<String, dynamic>.from(
+      if (global is Map) {
+        global.forEach((outerKey, outerValue) {
+          // Flat shape: clientStatus/{clientUid}
+          if (clientIds.contains(outerKey.toString()) && outerValue is Map) {
+            out[outerKey.toString()] = Map<String, dynamic>.from(
+              outerValue.map((k, v) => MapEntry(k.toString(), v)),
+            );
+            return;
+          }
+          // Nested shape: clientStatus/{adminUid}/{clientUid}
+          if (outerValue is! Map) {
+            return;
+          }
+          outerValue.forEach((clientUid, row) {
+            if (!clientIds.contains(clientUid.toString()) || row is! Map) {
+              return;
+            }
+            final asMap = Map<String, dynamic>.from(
               row.map((k, v) => MapEntry(k.toString(), v)),
             );
-          }
+            final existing = out[clientUid.toString()];
+            if (existing == null || _extractTs(asMap) > _extractTs(existing)) {
+              out[clientUid.toString()] = asMap;
+            }
+          });
         });
       }
-      return out;
+      if (out.isNotEmpty) {
+        return out;
+      }
+      return _fallbackStatusFromAnyAdmin(adminUid);
     });
+  }
+
+  Future<Set<String>> _loadAdminClientIds(String adminUid) async {
+    final clientsSnap = await _db.ref('adminClients/$adminUid').get();
+    final ids = <String>{};
+    if (clientsSnap.value is Map) {
+      (clientsSnap.value as Map).forEach((k, _) => ids.add(k.toString()));
+    }
+    return ids;
+  }
+
+  Future<Map<String, Map<String, dynamic>>> _fallbackLatestFromAnyAdmin(
+    String adminUid,
+  ) async {
+    final clientsSnap = await _db.ref('adminClients/$adminUid').get();
+    final clientIds = <String>{};
+    if (clientsSnap.value is Map) {
+      (clientsSnap.value as Map).forEach((k, _) => clientIds.add(k.toString()));
+    }
+    if (clientIds.isEmpty) {
+      return <String, Map<String, dynamic>>{};
+    }
+
+    final globalLatestSnap = await _db.ref('locationsLatest').get();
+    final result = <String, Map<String, dynamic>>{};
+    if (globalLatestSnap.value is! Map) {
+      return result;
+    }
+
+    (globalLatestSnap.value as Map).forEach((outerKey, outerValue) {
+      // Handles flat shape: locationsLatest/{clientUid}
+      if (clientIds.contains(outerKey.toString()) && outerValue is Map) {
+        final flatRow = Map<String, dynamic>.from(
+          outerValue.map((k, v) => MapEntry(k.toString(), v)),
+        );
+        final existing = result[outerKey.toString()];
+        if (existing == null || _extractTs(flatRow) > _extractTs(existing)) {
+          result[outerKey.toString()] = flatRow;
+        }
+        return;
+      }
+
+      // Handles nested shape: locationsLatest/{adminUid}/{clientUid}
+      if (outerValue is! Map) {
+        return;
+      }
+      outerValue.forEach((clientUid, row) {
+        if (!clientIds.contains(clientUid.toString()) || row is! Map) {
+          return;
+        }
+        final asMap = Map<String, dynamic>.from(
+          row.map((k, v) => MapEntry(k.toString(), v)),
+        );
+        final existing = result[clientUid.toString()];
+        if (existing == null || _extractTs(asMap) > _extractTs(existing)) {
+          result[clientUid.toString()] = asMap;
+        }
+      });
+    });
+    return result;
+  }
+
+  Future<Map<String, Map<String, dynamic>>> _fallbackStatusFromAnyAdmin(
+    String adminUid,
+  ) async {
+    final clientsSnap = await _db.ref('adminClients/$adminUid').get();
+    final clientIds = <String>{};
+    if (clientsSnap.value is Map) {
+      (clientsSnap.value as Map).forEach((k, _) => clientIds.add(k.toString()));
+    }
+    if (clientIds.isEmpty) {
+      return <String, Map<String, dynamic>>{};
+    }
+
+    final globalStatusSnap = await _db.ref('clientStatus').get();
+    final result = <String, Map<String, dynamic>>{};
+    if (globalStatusSnap.value is! Map) {
+      return result;
+    }
+
+    (globalStatusSnap.value as Map).forEach((outerKey, outerValue) {
+      // Handles flat shape: clientStatus/{clientUid}
+      if (clientIds.contains(outerKey.toString()) && outerValue is Map) {
+        final flatRow = Map<String, dynamic>.from(
+          outerValue.map((k, v) => MapEntry(k.toString(), v)),
+        );
+        final existing = result[outerKey.toString()];
+        if (existing == null || _extractTs(flatRow) > _extractTs(existing)) {
+          result[outerKey.toString()] = flatRow;
+        }
+        return;
+      }
+
+      // Handles nested shape: clientStatus/{adminUid}/{clientUid}
+      if (outerValue is! Map) {
+        return;
+      }
+      outerValue.forEach((clientUid, row) {
+        if (!clientIds.contains(clientUid.toString()) || row is! Map) {
+          return;
+        }
+        final asMap = Map<String, dynamic>.from(
+          row.map((k, v) => MapEntry(k.toString(), v)),
+        );
+        final existing = result[clientUid.toString()];
+        if (existing == null || _extractTs(asMap) > _extractTs(existing)) {
+          result[clientUid.toString()] = asMap;
+        }
+      });
+    });
+    return result;
+  }
+
+  int _extractTs(Map<String, dynamic> row) {
+    return (row['lastSeen'] as num?)?.toInt() ??
+        (row['timestamp'] as num?)?.toInt() ??
+        (row['clientTimestamp'] as num?)?.toInt() ??
+        0;
   }
 
   Stream<List<ManagedBoundary>> watchBoundaries(String adminUid) {

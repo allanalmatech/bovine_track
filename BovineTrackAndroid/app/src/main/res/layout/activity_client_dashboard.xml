@@ -26,11 +26,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/locationLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Waiting for GPS fix..." />
+        <TextView
+            android:id="@+id/locationLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Latest livestock location summary"
+            android:text="Waiting for GPS fix..." />
 
             <TextView
                 android:id="@+id/statusLabel"
@@ -46,12 +47,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:contentDescription="Start or stop background tracking"
             android:text="Continuous Foreground Tracking" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/simulationSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="Enable demo simulation mode"
             android:text="Simulation Mode (Indoor Demo)" />
 
         <com.google.android.material.button.MaterialButton

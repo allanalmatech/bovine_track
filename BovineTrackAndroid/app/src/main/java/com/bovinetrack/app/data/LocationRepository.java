@@ -8,6 +8,7 @@ import com.bovinetrack.app.data.local.AppDatabase;
 import com.bovinetrack.app.data.local.entity.AlertEntity;
 import com.bovinetrack.app.data.local.entity.GeofenceZoneEntity;
 import com.bovinetrack.app.data.local.entity.LocationEntity;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,11 +23,13 @@ public class LocationRepository {
 
     private final AppDatabase db;
     private final DevicePreferences preferences;
+    private final WearSyncClient wearSyncClient;
     private final ExecutorService io;
 
     private LocationRepository(Context context) {
         db = AppDatabase.get(context);
         preferences = new DevicePreferences(context);
+        wearSyncClient = new WearSyncClient(context);
         io = Executors.newSingleThreadExecutor();
     }
 
@@ -50,7 +53,7 @@ public class LocationRepository {
     }
 
     public LiveData<List<LocationEntity>> observeRecentFleet() {
-        return db.locationDao().observeLatestAll(System.currentTimeMillis() - 1000L * 60L * 60L * 6L);
+        return db.locationDao().observeLatestPerDevice();
     }
 
     public LiveData<List<AlertEntity>> observeAlerts() {
@@ -73,9 +76,26 @@ public class LocationRepository {
         io.execute(() -> {
             long id = db.locationDao().insert(location);
             maybeSyncLocation(location, id);
+            wearSyncClient.publishLatestLocation(
+                    location.deviceId,
+                    location.latitude,
+                    location.longitude,
+                    location.timestamp,
+                    location.battery
+            );
             List<GeofenceZoneEntity> zones = db.zoneDao().getAll();
-            List<String> violations = GeofenceEngine.evaluate(location, zones);
-            for (String violation : violations) {
+            Map<Long, Boolean> previous = new HashMap<>();
+            for (GeofenceZoneEntity zone : zones) {
+                Boolean state = preferences.getLastZoneInsideState(location.deviceId, zone.id);
+                if (state != null) {
+                    previous.put(zone.id, state);
+                }
+            }
+            GeofenceEngine.GeofenceEvaluation evaluation = GeofenceEngine.evaluateCrossings(location, zones, previous);
+            for (Map.Entry<Long, Boolean> entry : evaluation.zoneInsideState.entrySet()) {
+                preferences.setLastZoneInsideState(location.deviceId, entry.getKey(), entry.getValue());
+            }
+            for (String violation : evaluation.alerts) {
                 AlertEntity alert = new AlertEntity();
                 alert.deviceId = location.deviceId;
                 alert.type = "GEOFENCE";
@@ -84,6 +104,7 @@ public class LocationRepository {
                 alert.longitude = location.longitude;
                 alert.timestamp = System.currentTimeMillis();
                 db.alertDao().insert(alert);
+                pushBoundaryAlert(location.deviceId, violation, location.latitude, location.longitude, alert.timestamp);
             }
         });
     }
@@ -98,6 +119,47 @@ public class LocationRepository {
             alert.longitude = lng;
             alert.timestamp = System.currentTimeMillis();
             db.alertDao().insert(alert);
+        });
+    }
+
+    public void loadHistoryPage(String deviceId, long beforeTimestamp, int limit, HistoryPageCallback callback) {
+        io.execute(() -> {
+            List<LocationEntity> page = db.locationDao().loadHistoryPage(deviceId, beforeTimestamp, limit);
+            callback.onLoaded(page);
+        });
+    }
+
+    public void syncMessagingToken() {
+        String url = preferences.getFirebaseUrl();
+        if (url == null || url.isEmpty()) {
+            return;
+        }
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+            if (token == null || token.isEmpty()) {
+                return;
+            }
+            io.execute(() -> {
+                try {
+                    FirebaseDatabase.getInstance(url)
+                            .getReference("deviceTokens")
+                            .child(preferences.getDeviceId())
+                            .setValue(token);
+                } catch (Exception ignored) {
+                }
+            });
+        });
+    }
+
+    public void reRegisterGeofenceMonitoring() {
+        io.execute(() -> {
+            List<GeofenceZoneEntity> zones = db.zoneDao().getAll();
+            for (GeofenceZoneEntity zone : zones) {
+                String deviceId = preferences.getDeviceId();
+                Boolean state = preferences.getLastZoneInsideState(deviceId, zone.id);
+                if (state == null) {
+                    preferences.setLastZoneInsideState(deviceId, zone.id, false);
+                }
+            }
         });
     }
 
@@ -146,5 +208,29 @@ public class LocationRepository {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    private void pushBoundaryAlert(String deviceId, String message, double lat, double lng, long timestamp) {
+        String url = preferences.getFirebaseUrl();
+        if (url == null || url.isEmpty()) {
+            return;
+        }
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance(url);
+            DatabaseReference ref = database.getReference("boundaryAlerts").push();
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("deviceId", deviceId);
+            payload.put("message", message);
+            payload.put("lat", lat);
+            payload.put("lng", lng);
+            payload.put("timestamp", timestamp);
+            payload.put("priority", "high");
+            ref.setValue(payload);
+        } catch (Exception ignored) {
+        }
+    }
+
+    public interface HistoryPageCallback {
+        void onLoaded(List<LocationEntity> page);
     }
 }

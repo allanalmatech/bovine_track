@@ -34,6 +34,7 @@ public class SimpleLineAdapter extends RecyclerView.Adapter<SimpleLineAdapter.Ho
         Item item = items.get(position);
         holder.title.setText(item.title);
         holder.subtitle.setText(item.subtitle);
+        holder.itemView.setContentDescription(item.title + ". " + item.subtitle);
     }
 
     @Override

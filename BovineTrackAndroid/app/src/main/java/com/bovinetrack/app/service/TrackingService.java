@@ -21,45 +21,60 @@ import androidx.core.app.NotificationCompat;
 import com.bovinetrack.app.BovineTrackApp;
 import com.bovinetrack.app.R;
 import com.bovinetrack.app.data.DevicePreferences;
+import com.bovinetrack.app.data.KalmanLocationFilter;
 import com.bovinetrack.app.data.LocationRepository;
 import com.bovinetrack.app.data.local.entity.LocationEntity;
 import com.bovinetrack.app.ui.client.ClientDashboardActivity;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.gms.location.DetectedActivity;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import java.util.Random;
 
 public class TrackingService extends Service {
     public static final String EXTRA_SIMULATION = "simulation";
+    private static final String ACTIVITY_UPDATE_ACTION = "com.bovinetrack.app.ACTIVITY_UPDATE";
 
     private FusedLocationProviderClient fusedClient;
+    private ActivityRecognitionClient activityRecognitionClient;
     private LocationRepository repository;
     private DevicePreferences prefs;
+    private KalmanLocationFilter kalmanFilter;
     private LocationCallback callback;
     private boolean simulation;
     private final Handler simulationHandler = new Handler(Looper.getMainLooper());
     private int simulationTick = 0;
+    private long currentIntervalMs = -1L;
+    private PendingIntent activityIntent;
 
     @Override
     public void onCreate() {
         super.onCreate();
         fusedClient = LocationServices.getFusedLocationProviderClient(this);
+        activityRecognitionClient = ActivityRecognition.getClient(this);
         repository = LocationRepository.get(this);
         prefs = new DevicePreferences(this);
+        kalmanFilter = new KalmanLocationFilter();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         simulation = intent != null && intent.getBooleanExtra(EXTRA_SIMULATION, false);
         startForeground(7, buildNotification("Tracking active"));
+        prefs.setTrackingEnabled(true);
 
         if (simulation) {
             startSimulation();
         } else {
+            registerActivityRecognition();
             requestLocationUpdates();
         }
 
@@ -69,8 +84,12 @@ public class TrackingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        prefs.setTrackingEnabled(false);
         if (callback != null) {
             fusedClient.removeLocationUpdates(callback);
+        }
+        if (activityRecognitionClient != null && activityIntent != null) {
+            activityRecognitionClient.removeActivityUpdates(activityIntent);
         }
         simulationHandler.removeCallbacksAndMessages(null);
     }
@@ -87,7 +106,16 @@ public class TrackingService extends Service {
             return;
         }
 
-        LocationRequest request = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L)
+        long desiredInterval = calculateAdaptiveInterval();
+        if (callback != null && currentIntervalMs == desiredInterval) {
+            return;
+        }
+        currentIntervalMs = desiredInterval;
+        if (callback != null) {
+            fusedClient.removeLocationUpdates(callback);
+        }
+
+        LocationRequest request = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, desiredInterval)
                 .setMinUpdateDistanceMeters(10f)
                 .build();
 
@@ -96,7 +124,11 @@ public class TrackingService extends Service {
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
-                    persistLocation(location, false);
+                    Location smoothed = kalmanFilter.smooth(location);
+                    if (smoothed != null) {
+                        persistLocation(smoothed, false);
+                    }
+                    requestLocationUpdates();
                 }
             }
         };
@@ -135,11 +167,38 @@ public class TrackingService extends Service {
         entity.synced = false;
 
         repository.saveLocation(entity);
+        repository.syncMessagingToken();
         repository.syncPending();
         if (entity.battery <= 15) {
             repository.addAlert(entity.deviceId, "BATTERY", "Low battery detected", entity.latitude, entity.longitude);
             dispatchAlertNotification("Low battery", "Device " + entity.deviceId + " battery at " + entity.battery + "%");
         }
+    }
+
+    private void registerActivityRecognition() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+            TrackingStateStore.setMoving(false, 0);
+            return;
+        }
+        Intent intent = new Intent(this, TrackingActivityReceiver.class);
+        intent.setAction(ACTIVITY_UPDATE_ACTION);
+        activityIntent = PendingIntent.getBroadcast(
+                this,
+                44,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        activityRecognitionClient.requestActivityUpdates(20_000L, activityIntent);
+    }
+
+    private long calculateAdaptiveInterval() {
+        if (simulation) {
+            return 8_000L;
+        }
+        if (!TrackingStateStore.isMoving()) {
+            return 60_000L;
+        }
+        return 12_000L;
     }
 
     private int readBatteryPercent() {
@@ -173,6 +232,34 @@ public class TrackingService extends Service {
         NotificationManager manager = getSystemService(NotificationManager.class);
         if (manager != null) {
             manager.notify((int) System.currentTimeMillis(), notification);
+        }
+    }
+
+    public static class TrackingStateStore {
+        private static final AtomicInteger ACTIVITY_TYPE = new AtomicInteger(DetectedActivity.STILL);
+        private static final AtomicInteger ACTIVITY_CONFIDENCE = new AtomicInteger(0);
+
+        public static void updateActivity(int type, int confidence) {
+            ACTIVITY_TYPE.set(type);
+            ACTIVITY_CONFIDENCE.set(confidence);
+        }
+
+        public static void setMoving(boolean moving, int confidence) {
+            ACTIVITY_TYPE.set(moving ? DetectedActivity.ON_FOOT : DetectedActivity.STILL);
+            ACTIVITY_CONFIDENCE.set(confidence);
+        }
+
+        public static boolean isMoving() {
+            int type = ACTIVITY_TYPE.get();
+            int confidence = ACTIVITY_CONFIDENCE.get();
+            if (confidence < 45) {
+                return false;
+            }
+            return type == DetectedActivity.IN_VEHICLE
+                    || type == DetectedActivity.ON_BICYCLE
+                    || type == DetectedActivity.ON_FOOT
+                    || type == DetectedActivity.RUNNING
+                    || type == DetectedActivity.WALKING;
         }
     }
 }

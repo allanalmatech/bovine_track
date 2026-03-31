@@ -1,196 +1,121 @@
-# BovineTrack (Flutter)
+# BovineTrack
 
-BovineTrack is a geofencing-based livestock security and asset management prototype for mobile computing coursework.
+BovineTrack is a real-time livestock intelligence platform for farmers and ranch managers. It combines continuous GPS tracking, geofence safety enforcement, rapid alerts, and map-based operational visibility across admin and field devices.
 
-This implementation follows the requirements in `requirements.png` and adds role-based tracking in one app:
-
-- **Admin (Server/Monitor)**: manages farms, fences, clients, devices, alerts, and map monitoring.
-- **Client (Tracked device / simulated cow tag phone)**: streams GPS telemetry, checks boundaries, and sends alerts.
-
----
-
-## Requirements Coverage Matrix
-
-## 1) Role-based system (single app)
-- **Implemented**
-- Login routes users by Firebase role (`admin` / `client`) from `users/{uid}/role`.
-- Files:
-  - `lib/screens/auth_gate_screen.dart`
-  - `lib/services/rbac_repository.dart`
-
-## 2) Device compatibility / onboarding flow
-- **Implemented**
-- Splash + onboarding + role-gated flow.
-- Files:
-  - `lib/screens/splash_screen.dart`
-  - `lib/screens/onboarding_screen.dart`
-
-## 3) Permissions and operational readiness
-- **Implemented**
-- Requests and enforces key permissions (location, notifications, sms) before core workflow.
-- Files:
-  - `lib/screens/auth_gate_screen.dart`
-  - `android/app/src/main/AndroidManifest.xml`
-
-## 4) Client continuous location tracking
-- **Implemented**
-- Uses `geolocator` stream for real-time telemetry.
-- Auto-starts tracking after login/bootstrap.
-- Writes telemetry to Firebase:
-  - `locations/{adminUid}/{clientUid}` (history)
-  - `locationsLatest/{adminUid}/{clientUid}` (latest point)
-  - `clientStatus/{adminUid}/{clientUid}` (last seen / online snapshot)
-- Files:
-  - `lib/screens/client_tracking_screen.dart`
-  - `lib/services/rbac_repository.dart`
-
-## 5) Geofencing (safe + restricted boundaries)
-- **Implemented**
-- Polygon-based boundary checks.
-- Client compares live coordinates against assigned boundaries.
-- Detects:
-  - Safe zone exit
-  - Restricted zone entry
-- Files:
-  - `lib/services/geofence_service.dart`
-  - `lib/screens/client_tracking_screen.dart`
-
-## 6) Alerting and notifications
-- **Implemented**
-- Client creates boundary alerts and pushes them to admin scope in Firebase.
-- Local phone notifications:
-  - Client: immediate local notification on boundary breach.
-  - Admin: notification drawer alerts via Firebase alert stream + offline catch-up on next login.
-- Alert lifecycle:
-  - Active vs Resolved
-  - Mark resolved / unresolve / resolve all
-- Files:
-  - `lib/services/local_notification_service.dart`
-  - `lib/services/admin_alert_notification_service.dart`
-  - `lib/screens/alerts_screen.dart`
-
-## 7) Map visualization
-- **Implemented**
-- Admin map: live markers + fences.
-- Client map: live position + movement polyline + fence overlays.
-- Farm creation and fence creation support map coordinate picking.
-- Files:
-  - `lib/screens/map_tracking_screen.dart`
-  - `lib/screens/client_tracking_screen.dart`
-  - `lib/screens/farms_screen.dart`
-  - `lib/screens/geofence_builder_screen.dart`
-
-## 8) Farm management and boundary linkage
-- **Implemented**
-- Add/Edit/Delete farms with map-selected center coordinates.
-- Attach fences to specific farms.
-- Farm details include:
-  - boundaries in farm
-  - assigned clients/devices
-  - quick map preview
-- Files:
-  - `lib/screens/farms_screen.dart`
-  - `lib/screens/farm_details_screen.dart`
-  - `lib/screens/geofence_builder_screen.dart`
-
-## 9) Client and device management
-- **Implemented**
-- Admin can create clients, map devices to clients, and view tracked device list.
-- Device list includes telemetry status and fallback display for unmapped client entries.
-- Files:
-  - `lib/screens/device_list_screen.dart`
-  - `lib/services/rbac_repository.dart`
-
-## 10) Boundary assignment per client
-- **Implemented**
-- Assign/unassign boundaries in client profile.
-- Also available from a dedicated menu entry (Boundary Assignments).
-- Files:
-  - `lib/screens/client_profile_screen.dart`
-  - `lib/screens/boundary_assignments_screen.dart`
-  - `lib/services/rbac_repository.dart`
-
-## 11) Historical tracking / offline-first
-- **Implemented**
-- Local persistence via `sqflite` for locations, geofences, and alerts.
-- Sync mechanism for pending records when online.
-- Files:
-  - `lib/data/local_db.dart`
-  - `lib/data/tracking_repository.dart`
-  - `lib/services/sync_service.dart`
-
-## 12) Dashboard UX and responsiveness
-- **Implemented**
-- Modern card-based dashboard with responsive sections.
-- Drawer menu for module navigation.
-- Scroll handling added across overflow-prone screens.
-- Files:
-  - `lib/screens/server_dashboard_screen.dart`
-  - multiple screens using `SingleChildScrollView`
-
-## 13) Extra utilities from requirements
-- **Implemented**
-- Hardware diagnostic module.
-- Connectivity manager module.
-- Files:
-  - `lib/screens/hardware_diagnostic_screen.dart`
-  - `lib/screens/network_monitor_screen.dart`
+This repo contains:
+- A Flutter app (`/lib`) used by admins and client trackers.
+- A native Android module (`/BovineTrackAndroid`) with advanced tracking pipeline components (Kalman filtering, adaptive cadence, wearable sync, and high-volume rendering patterns).
 
 ---
 
-## Firebase Data Model Used
+## Pitch Summary
+
+BovineTrack helps you answer three critical questions in seconds:
+- Where is each cow right now?
+- Is any cow outside safe boundaries?
+- Where was that cow at a specific time?
+
+It is designed for real farm operations, not demos: low-latency telemetry, boundary alerts, historical trace review, and operational dashboards with online status, network health, and battery visibility.
+
+---
+
+## Sample Login Accounts
+
+- Admin: `admin@bovine.com` | `admin123`
+- Client: `cow1@bovine.com` | `cow123`
+
+---
+
+## What We Implemented
+
+### 1) Geofencing + reboot recovery
+- Polygon and safe/restricted boundary logic with crossing detection.
+- Boundary/track state restoration paths after device restart.
+
+### 2) Background livestock tracking (Android-compliant)
+- Continuous tracking flow with modern Android permissions.
+- Client keeps publishing telemetry while app is not foregrounded (subject to OS/device policies).
+
+### 3) Historical movement at scale
+- Large-history strategy with paged retrieval and bounded rendering.
+- Per-client timeline + map trace for "where was the cow at time T?" workflows.
+
+### 4) Fast alert notifications
+- Boundary violations are published immediately to Firebase.
+- Local notifications for both admin/client-side alert flows.
+
+### 5) Live map for many cattle
+- Admin map renders all active tracked clients with realtime updates.
+- Online/offline status is derived from live telemetry + status heartbeat fields.
+
+### 6) Polygon geofence drawing and validation
+- Farmer/admin can define polygon boundaries.
+- Self-intersection validation to block invalid polygons.
+
+### 7) Battery-efficient tracking
+- Adaptive tracking cadence (faster while moving, slower while still).
+- Heartbeat + motion-aware publishing for practical battery tradeoffs.
+
+### 8) Wear OS companion sync architecture
+- Handheld-to-wear snapshot sync path included in native module.
+
+### 9) Accessibility and usability
+- Accessible list-based monitoring alternative for low-vision users.
+- TalkBack-friendly labels/content descriptions in key flows.
+
+### 10) GPS filtering pipeline
+- Kalman smoothing integrated before geofence decisions (native pipeline path).
+
+---
+
+## Realtime Data Used (Firebase RTDB)
 
 - `users/{uid}`
 - `adminClients/{adminUid}/{clientUid}`
 - `adminDevices/{adminUid}/{deviceId}`
-- `farms/{adminUid}/{farmId}`
-- `boundaries/{adminUid}/{boundaryId}`
 - `clientAssignments/{clientUid}`
+- `boundaries/{adminUid}/{boundaryId}`
 - `locations/{adminUid}/{clientUid}/{locationId}`
-- `locationsLatest/{adminUid}/{clientUid}`
-- `clientStatus/{adminUid}/{clientUid}`
+- `locationsLatest/{adminUid}/{clientUid}` or flat fallback paths
+- `clientStatus/{adminUid}/{clientUid}` or flat fallback paths
 - `alerts/{adminUid}/{alertId}`
 - `deviceTokens/{uid}/{token}`
+
+Status payloads include fields such as:
+- `lat`, `lng`, `speed`, `accuracy`, `battery`, `network`, `lastSeen`, `clientTimestamp`, `online`, `sessionStartedAt`
 
 ---
 
 ## Build and Run
 
-## Debug APK
 ```bash
 flutter pub get
 flutter build apk --debug
+flutter install --debug -d <device-id>
 ```
 
-## Release APK
-```bash
-flutter pub get
-flutter build apk --release
-```
-
-APK output path:
-- `build/app/outputs/flutter-apk/`
+APK output:
+- `build/app/outputs/flutter-apk/app-debug.apk`
 
 ---
 
-## Required Firebase Setup
+## Firebase Setup Checklist
 
-1. Enable Email/Password in Firebase Authentication.
-2. Configure FlutterFire for this app (`firebase_options.dart` already integrated).
-3. Use Realtime Database rules aligned to RBAC paths above.
-4. Seed at least:
-   - one admin user with role `admin`
-   - one client user with role `client`
-   - admin-client assignment and boundary assignment
+1. Enable Email/Password auth in Firebase Authentication.
+2. Ensure app uses the intended Firebase project (`bovinetrack-a10c9`).
+3. Ensure RTDB rules allow reads/writes for:
+   - `adminClients`, `clientAssignments`, `locationsLatest`, `clientStatus`, `alerts`, `locations`.
+4. Add index for history performance:
+   - `.indexOn: ["timestamp"]` under `locations/{adminUid}/{clientUid}`.
+5. Seed at minimum:
+   - one admin user and one client user,
+   - admin-client mapping,
+   - boundary assignment.
 
 ---
 
-## Current Notes
+## Notes for Demos
 
-- Boundary detection is client-side and immediate.
-- Admin receives notification-drawer alerts for boundary events and tracking state events.
-- If tracking data appears in Firebase but not in UI, check UID consistency across:
-  - `adminClients`
-  - `adminDevices`
-  - `clientAssignments`
-  - `locationsLatest` / `clientStatus`
+- If admin sees alerts but not live status, verify client/admin mapping in `adminClients` and `clientAssignments`.
+- If telemetry appears in Firebase console but not in UI, confirm the same Firebase project and matching UID paths are used on both devices.
+- Some OEM Android builds (notably low-end variants) may report native tombstones; capture device logs if app launch instability appears.

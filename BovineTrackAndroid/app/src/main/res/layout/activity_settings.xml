@@ -13,6 +13,7 @@
             android:id="@+id/deviceIdInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="Device identifier"
             android:hint="Device ID" />
 
         <EditText
@@ -20,7 +21,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:contentDescription="Firebase database URL"
             android:hint="Firebase DB URL (optional)" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/accessibilityModeSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Enable accessible monitoring mode" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/saveSettingsButton"
