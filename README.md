@@ -9,9 +9,10 @@
 | 3   | Mwunvaneza Godfrey  | 2023/BSE/100/PS     |
 | 4   | Ochwo Denis         | 2023/BSE/164/PS     |
 | 5   | Mbabazi Patience    | 2023/BSE/079/PS     |
-| 6   | Okello David        | 2023/BSE/XXX/PS     |
-| 7   | Allan Nuwamanya     | 2023/BSE/XXX/PS     |
-| 8   | Ainomujuni Yovan    | 2023/BSE/XXX/PS     |
+| 6   | Okello David        | 2023/BSE/127/PS     |
+| 7   | Allan Nuwamanya     | 2023/BSE/013/PS     |
+| 8   | Ainomujuni Yovan    | 2023/BSE/158/PS     |
+| 9   | Ikayo Emmanuel      | 2023/BSE/050/PS     |
 
 BovineTrack is a real-time livestock intelligence platform for farmers and ranch managers. It combines continuous GPS tracking, geofence safety enforcement, rapid alerts, and map-based operational visibility across admin and field devices.
 
