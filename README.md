@@ -1,4 +1,17 @@
-# BovineTrack
+# BovineTrack (A group 2 Concept)
+
+## Group 8 Members
+
+| No. | Name                | Registration Number |
+|-----|---------------------|---------------------|
+| 1   | Ainamaani Allan M   | 2023/BSE/151/PS     |
+| 2   | Murungi Kevin T     | 2023/BSE/094/PS     |
+| 3   | Mwunvaneza Godfrey  | 2023/BSE/100/PS     |
+| 4   | Ochwo Denis         | 2023/BSE/164/PS     |
+| 5   | Mbabazi Patience    | 2023/BSE/079/PS     |
+| 6   | Okello David        | 2023/BSE/XXX/PS     |
+| 7   | Allan Nuwamanya     | 2023/BSE/XXX/PS     |
+| 8   | Ainomujuni Yovan    | 2023/BSE/XXX/PS     |
 
 BovineTrack is a real-time livestock intelligence platform for farmers and ranch managers. It combines continuous GPS tracking, geofence safety enforcement, rapid alerts, and map-based operational visibility across admin and field devices.
 
@@ -8,14 +21,14 @@ This repo contains:
 
 ---
 
-## Pitch Summary
+## Summary
 
-BovineTrack helps you answer three critical questions in seconds:
+BovineTrack helps you answer three critical questions at your farm:
 - Where is each cow right now?
 - Is any cow outside safe boundaries?
 - Where was that cow at a specific time?
 
-It is designed for real farm operations, not demos: low-latency telemetry, boundary alerts, historical trace review, and operational dashboards with online status, network health, and battery visibility.
+It is designed for real farm operations: low-latency telemetry, boundary alerts, historical trace review, and operational dashboards with online status, network health, and battery visibility.
 
 ---
 
@@ -26,7 +39,7 @@ It is designed for real farm operations, not demos: low-latency telemetry, bound
 
 ---
 
-## What We Implemented
+## We Implemented 1,2,4,5,10 out of the given questions.
 
 ### 1) Geofencing + reboot recovery
 - Polygon and safe/restricted boundary logic with crossing detection.
@@ -36,10 +49,6 @@ It is designed for real farm operations, not demos: low-latency telemetry, bound
 - Continuous tracking flow with modern Android permissions.
 - Client keeps publishing telemetry while app is not foregrounded (subject to OS/device policies).
 
-### 3) Historical movement at scale
-- Large-history strategy with paged retrieval and bounded rendering.
-- Per-client timeline + map trace for "where was the cow at time T?" workflows.
-
 ### 4) Fast alert notifications
 - Boundary violations are published immediately to Firebase.
 - Local notifications for both admin/client-side alert flows.
@@ -47,21 +56,6 @@ It is designed for real farm operations, not demos: low-latency telemetry, bound
 ### 5) Live map for many cattle
 - Admin map renders all active tracked clients with realtime updates.
 - Online/offline status is derived from live telemetry + status heartbeat fields.
-
-### 6) Polygon geofence drawing and validation
-- Farmer/admin can define polygon boundaries.
-- Self-intersection validation to block invalid polygons.
-
-### 7) Battery-efficient tracking
-- Adaptive tracking cadence (faster while moving, slower while still).
-- Heartbeat + motion-aware publishing for practical battery tradeoffs.
-
-### 8) Wear OS companion sync architecture
-- Handheld-to-wear snapshot sync path included in native module.
-
-### 9) Accessibility and usability
-- Accessible list-based monitoring alternative for low-vision users.
-- TalkBack-friendly labels/content descriptions in key flows.
 
 ### 10) GPS filtering pipeline
 - Kalman smoothing integrated before geofence decisions (native pipeline path).
@@ -114,8 +108,4 @@ APK output:
 
 ---
 
-## Notes for Demos
-
-- If admin sees alerts but not live status, verify client/admin mapping in `adminClients` and `clientAssignments`.
-- If telemetry appears in Firebase console but not in UI, confirm the same Firebase project and matching UID paths are used on both devices.
-- Some OEM Android builds (notably low-end variants) may report native tombstones; capture device logs if app launch instability appears.
+## More is yet to come!
