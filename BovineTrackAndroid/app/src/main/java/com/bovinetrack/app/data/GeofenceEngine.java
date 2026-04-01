@@ -4,32 +4,41 @@ import com.bovinetrack.app.data.local.entity.GeofenceZoneEntity;
 import com.bovinetrack.app.data.local.entity.LocationEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GeofenceEngine {
-    public static List<String> evaluate(LocationEntity location, List<GeofenceZoneEntity> zones) {
+    public static GeofenceEvaluation evaluateCrossings(
+            LocationEntity location,
+            List<GeofenceZoneEntity> zones,
+            Map<Long, Boolean> previousInside
+    ) {
         List<String> alerts = new ArrayList<>();
-        boolean insideSafe = false;
+        Map<Long, Boolean> currentInside = new HashMap<>();
         for (GeofenceZoneEntity zone : zones) {
             boolean inside = isInsideZone(location.latitude, location.longitude, zone);
-            if (!zone.restricted && inside) {
-                insideSafe = true;
+            currentInside.put(zone.id, inside);
+            Boolean before = previousInside.get(zone.id);
+            if (before == null || before == inside) {
+                continue;
             }
-            if (zone.restricted && inside) {
-                alerts.add("Restricted zone entry: " + zone.name);
+
+            if (zone.restricted) {
+                if (inside) {
+                    alerts.add("Restricted zone entry: " + zone.name);
+                } else {
+                    alerts.add("Restricted zone exit: " + zone.name);
+                }
+            } else {
+                if (inside) {
+                    alerts.add("Returned to safe zone: " + zone.name);
+                } else {
+                    alerts.add("Safe zone breach: " + zone.name);
+                }
             }
         }
-        boolean hasSafeZones = false;
-        for (GeofenceZoneEntity zone : zones) {
-            if (!zone.restricted) {
-                hasSafeZones = true;
-                break;
-            }
-        }
-        if (hasSafeZones && !insideSafe) {
-            alerts.add("Safe zone breach detected");
-        }
-        return alerts;
+        return new GeofenceEvaluation(alerts, currentInside);
     }
 
     private static boolean isInsideZone(double lat, double lng, GeofenceZoneEntity zone) {
@@ -43,7 +52,7 @@ public class GeofenceEngine {
         return distance <= zone.radiusMeters;
     }
 
-    private static List<double[]> parsePoints(String raw) {
+    public static List<double[]> parsePoints(String raw) {
         List<double[]> out = new ArrayList<>();
         String[] pairs = raw.split(";");
         for (String pair : pairs) {
@@ -83,5 +92,15 @@ public class GeofenceEngine {
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         return 2 * earth * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    public static class GeofenceEvaluation {
+        public final List<String> alerts;
+        public final Map<Long, Boolean> zoneInsideState;
+
+        public GeofenceEvaluation(List<String> alerts, Map<Long, Boolean> zoneInsideState) {
+            this.alerts = alerts;
+            this.zoneInsideState = zoneInsideState;
+        }
     }
 }

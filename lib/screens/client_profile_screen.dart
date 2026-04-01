@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/geofence_model.dart';
 import '../models/rbac_models.dart';
@@ -22,6 +23,75 @@ class ClientProfileScreen extends StatefulWidget {
 class _ClientProfileScreenState extends State<ClientProfileScreen> {
   final RbacRepository _rbac = RbacRepository.instance;
   final Set<String> _saving = <String>{};
+  GoogleMapController? _historyMapController;
+  DateTime? _positionQueryTime;
+  Map<String, dynamic>? _positionAtTime;
+
+  @override
+  void dispose() {
+    _historyMapController?.dispose();
+    super.dispose();
+  }
+
+  String _formatTimestamp(int ts) {
+    final dt = DateTime.fromMillisecondsSinceEpoch(ts);
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} '
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
+  }
+
+  String _onlineDurationText(bool online, int? startedAt) {
+    if (!online || startedAt == null) {
+      return '--';
+    }
+    final d = DateTime.now().difference(
+      DateTime.fromMillisecondsSinceEpoch(startedAt),
+    );
+    if (d.isNegative) {
+      return '--';
+    }
+    final h = d.inHours;
+    final m = d.inMinutes % 60;
+    final s = d.inSeconds % 60;
+    return '${h}h ${m}m ${s}s';
+  }
+
+  Future<void> _pickAndFindPositionAtTime() async {
+    final date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now().subtract(const Duration(days: 90)),
+      lastDate: DateTime.now(),
+      initialDate: _positionQueryTime ?? DateTime.now(),
+    );
+    if (date == null || !mounted) {
+      return;
+    }
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_positionQueryTime ?? DateTime.now()),
+    );
+    if (time == null || !mounted) {
+      return;
+    }
+    final target = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+    final row = await _rbac.getClientPositionAtOrBefore(
+      adminUid: widget.adminUid,
+      clientUid: widget.client.uid,
+      targetTimestamp: target.millisecondsSinceEpoch,
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _positionQueryTime = target;
+      _positionAtTime = row;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +114,29 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
               final speed =
                   (status?['speed'] as num?)?.toDouble() ??
                   (latest?['speed'] as num?)?.toDouble();
+              final accuracy =
+                  (status?['accuracy'] as num?)?.toDouble() ??
+                  (latest?['accuracy'] as num?)?.toDouble();
+              final battery =
+                  (status?['battery'] as num?)?.toInt() ??
+                  (latest?['battery'] as num?)?.toInt();
+              final network =
+                  (status?['network'] as String?) ??
+                  (latest?['network'] as String?) ??
+                  'unknown';
               final ts =
                   (status?['lastSeen'] as num?)?.toInt() ??
                   (latest?['timestamp'] as num?)?.toInt();
+              final onlineByFlag = status?['online'] == true;
+              final onlineBySeen =
+                  ts != null &&
+                  DateTime.now()
+                          .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+                          .inMinutes <=
+                      2;
+              final online = onlineByFlag || onlineBySeen;
+              final sessionStartedAt = (status?['sessionStartedAt'] as num?)
+                  ?.toInt();
 
               return StreamBuilder<List<TrackedDevice>>(
                 stream: _rbac.watchAdminDevices(widget.adminUid),
@@ -147,6 +237,241 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                                 ts == null
                                     ? 'No last seen'
                                     : 'Speed: ${(speed ?? 0).toStringAsFixed(2)} m/s | Last seen: ${DateTime.fromMillisecondsSinceEpoch(ts)}',
+                              ),
+                            ),
+                          ),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Real-time Client Stats',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 14,
+                                    runSpacing: 8,
+                                    children: [
+                                      Text(
+                                        online
+                                            ? 'Status: ONLINE'
+                                            : 'Status: OFFLINE',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: online
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Online duration: ${_onlineDurationText(online, sessionStartedAt)}',
+                                      ),
+                                      Text(
+                                        'Battery: ${battery == null || battery < 0 ? '--' : '$battery%'}',
+                                      ),
+                                      Text('Network: ${network.toUpperCase()}'),
+                                      Text(
+                                        'GPS accuracy: ${accuracy == null ? '--' : '${accuracy.toStringAsFixed(1)} m'}',
+                                      ),
+                                      Text(
+                                        'Last seen: ${ts == null ? '--' : _formatTimestamp(ts)}',
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Expanded(
+                                        child: Text(
+                                          'Client Movement History (last 24h)',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                      OutlinedButton.icon(
+                                        onPressed: _pickAndFindPositionAtTime,
+                                        icon: const Icon(Icons.schedule),
+                                        label: const Text('Find at time'),
+                                      ),
+                                    ],
+                                  ),
+                                  if (_positionQueryTime != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: Text(
+                                        _positionAtTime == null
+                                            ? 'No point found at ${_formatTimestamp(_positionQueryTime!.millisecondsSinceEpoch)}'
+                                            : 'Point at ${_formatTimestamp(_positionQueryTime!.millisecondsSinceEpoch)} -> '
+                                                  '${((_positionAtTime!['lat'] as num?)?.toDouble() ?? 0).toStringAsFixed(6)}, '
+                                                  '${((_positionAtTime!['lng'] as num?)?.toDouble() ?? 0).toStringAsFixed(6)}',
+                                      ),
+                                    ),
+                                  const SizedBox(height: 10),
+                                  StreamBuilder<List<Map<String, dynamic>>>(
+                                    stream: _rbac.watchClientLocationHistory(
+                                      adminUid: widget.adminUid,
+                                      clientUid: widget.client.uid,
+                                      sinceTimestamp: DateTime.now()
+                                          .subtract(const Duration(hours: 24))
+                                          .millisecondsSinceEpoch,
+                                      limit: 1200,
+                                    ),
+                                    builder: (context, historySnap) {
+                                      final rows =
+                                          historySnap.data ??
+                                          const <Map<String, dynamic>>[];
+                                      final points = rows
+                                          .map((row) {
+                                            final hLat = (row['lat'] as num?)
+                                                ?.toDouble();
+                                            final hLng = (row['lng'] as num?)
+                                                ?.toDouble();
+                                            if (hLat == null || hLng == null) {
+                                              return null;
+                                            }
+                                            return LatLng(hLat, hLng);
+                                          })
+                                          .whereType<LatLng>()
+                                          .toList();
+
+                                      final markers = <Marker>{};
+                                      if (lat != null && lng != null) {
+                                        markers.add(
+                                          Marker(
+                                            markerId: const MarkerId(
+                                              'current_position',
+                                            ),
+                                            position: LatLng(lat, lng),
+                                            infoWindow: const InfoWindow(
+                                              title: 'Current position',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      final qLat =
+                                          (_positionAtTime?['lat'] as num?)
+                                              ?.toDouble();
+                                      final qLng =
+                                          (_positionAtTime?['lng'] as num?)
+                                              ?.toDouble();
+                                      if (qLat != null && qLng != null) {
+                                        markers.add(
+                                          Marker(
+                                            markerId: const MarkerId(
+                                              'queried_position',
+                                            ),
+                                            position: LatLng(qLat, qLng),
+                                            icon:
+                                                BitmapDescriptor.defaultMarkerWithHue(
+                                                  BitmapDescriptor.hueAzure,
+                                                ),
+                                            infoWindow: const InfoWindow(
+                                              title:
+                                                  'Position at selected time',
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      final center = markers.isNotEmpty
+                                          ? markers.first.position
+                                          : const LatLng(-0.6072, 30.6545);
+
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 230,
+                                            child: GoogleMap(
+                                              initialCameraPosition:
+                                                  CameraPosition(
+                                                    target: center,
+                                                    zoom: 14,
+                                                  ),
+                                              onMapCreated: (controller) {
+                                                _historyMapController =
+                                                    controller;
+                                              },
+                                              markers: markers,
+                                              polylines: {
+                                                if (points.length >= 2)
+                                                  Polyline(
+                                                    polylineId:
+                                                        const PolylineId(
+                                                          'history_route',
+                                                        ),
+                                                    points: points,
+                                                    width: 4,
+                                                    color: Colors.blue,
+                                                  ),
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              'History points: ${rows.length}',
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          SizedBox(
+                                            height: 180,
+                                            child: ListView.separated(
+                                              itemCount: rows.length,
+                                              separatorBuilder: (_, index) =>
+                                                  const Divider(height: 1),
+                                              itemBuilder: (context, index) {
+                                                final row =
+                                                    rows[rows.length -
+                                                        1 -
+                                                        index];
+                                                final hTs =
+                                                    (row['timestamp'] as num?)
+                                                        ?.toInt();
+                                                final hLat =
+                                                    (row['lat'] as num?)
+                                                        ?.toDouble();
+                                                final hLng =
+                                                    (row['lng'] as num?)
+                                                        ?.toDouble();
+                                                final hSpeed =
+                                                    (row['speed'] as num?)
+                                                        ?.toDouble();
+                                                return ListTile(
+                                                  dense: true,
+                                                  title: Text(
+                                                    hTs == null
+                                                        ? 'Unknown time'
+                                                        : _formatTimestamp(hTs),
+                                                  ),
+                                                  subtitle: Text(
+                                                    '${hLat?.toStringAsFixed(6) ?? '--'}, ${hLng?.toStringAsFixed(6) ?? '--'} '
+                                                    '| speed ${(hSpeed ?? 0).toStringAsFixed(2)} m/s',
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ),

@@ -20,6 +20,9 @@ public interface LocationDao {
     @Query("SELECT * FROM locations WHERE deviceId = :deviceId ORDER BY timestamp DESC LIMIT 150")
     LiveData<List<LocationEntity>> observeRecent(String deviceId);
 
+    @Query("SELECT * FROM locations WHERE deviceId = :deviceId AND timestamp < :before ORDER BY timestamp DESC LIMIT :limit")
+    List<LocationEntity> loadHistoryPage(String deviceId, long before, int limit);
+
     @Query("SELECT * FROM locations WHERE synced = 0 ORDER BY timestamp ASC LIMIT 100")
     List<LocationEntity> pendingSync();
 
@@ -28,4 +31,7 @@ public interface LocationDao {
 
     @Query("SELECT * FROM locations WHERE timestamp > :since ORDER BY timestamp DESC")
     LiveData<List<LocationEntity>> observeLatestAll(long since);
+
+    @Query("SELECT * FROM locations WHERE id IN (SELECT MAX(id) FROM locations GROUP BY deviceId) ORDER BY timestamp DESC")
+    LiveData<List<LocationEntity>> observeLatestPerDevice();
 }

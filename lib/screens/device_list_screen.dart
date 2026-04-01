@@ -15,6 +15,15 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   final RbacRepository _rbac = RbacRepository.instance;
   String _adminUid = '';
 
+  int? _extractLastSeen(Map<String, dynamic>? row) {
+    if (row == null) {
+      return null;
+    }
+    return (row['lastSeen'] as num?)?.toInt() ??
+        (row['timestamp'] as num?)?.toInt() ??
+        (row['clientTimestamp'] as num?)?.toInt();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -176,9 +185,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         final row =
                             statusByClient[d.clientUid] ??
                             latestByClient[d.clientUid];
-                        final ts =
-                            (row?['lastSeen'] as num?)?.toInt() ??
-                            (row?['timestamp'] as num?)?.toInt();
+                        final ts = _extractLastSeen(row);
                         if (ts == null) {
                           return false;
                         }
@@ -211,8 +218,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                             final status = statusByClient[device.clientUid];
                             final latest = latestByClient[device.clientUid];
                             final ts =
-                                (status?['lastSeen'] as num?)?.toInt() ??
-                                (latest?['timestamp'] as num?)?.toInt();
+                                _extractLastSeen(status) ??
+                                _extractLastSeen(latest);
                             final lat =
                                 (status?['lat'] as num?)?.toDouble() ??
                                 (latest?['lat'] as num?)?.toDouble();
@@ -229,7 +236,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                                     DateTime.fromMillisecondsSinceEpoch(ts),
                                   );
                             final online =
-                                lastSeen != null && lastSeen.inMinutes <= 2;
+                                (status?['online'] == true) ||
+                                (lastSeen != null && lastSeen.inMinutes <= 2);
 
                             return Card(
                               color: AppColors.surfaceContainerLow,

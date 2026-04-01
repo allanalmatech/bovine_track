@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/tracking_repository.dart';
 import '../models/alert_model.dart';
@@ -28,6 +30,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   final TrackingRepository _repo = TrackingRepository.instance;
   final RbacRepository _rbac = RbacRepository.instance;
   final AdaptiveLocationService _adaptiveLocation = AdaptiveLocationService();
+  final Battery _battery = Battery();
   StreamSubscription<Position>? _positionSub;
   StreamSubscription<ActivityState>? _activitySub;
   Position? _latest;
@@ -41,9 +44,13 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   final List<LatLng> _routePoints = <LatLng>[];
   GoogleMapController? _mapController;
   Timer? _assignmentRefreshTimer;
+  Timer? _heartbeatTimer;
   Timer? _breachBlinkTimer;
   DateTime _lastBoundaryAlertAt = DateTime.fromMillisecondsSinceEpoch(0);
   bool _startPositionPushed = false;
+  DateTime _lastPersistedAt = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastPublishedAt = DateTime.fromMillisecondsSinceEpoch(0);
+  int _sessionStartedAt = 0;
   bool _outsideSafeZone = false;
   bool _blinkPhase = false;
   String _boundaryStateLabel = 'Boundary status unknown';
@@ -64,6 +71,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     _activitySub?.cancel();
     _adaptiveLocation.stopTracking();
     _assignmentRefreshTimer?.cancel();
+    _heartbeatTimer?.cancel();
     _breachBlinkTimer?.cancel();
     _mapController?.dispose();
     super.dispose();
@@ -72,7 +80,11 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   final _lifecycleObserver = _ClientLifecycleObserver();
 
   Future<void> _requestRequiredPermissions() async {
-    await [Permission.location, Permission.notification].request();
+    await [
+      Permission.location,
+      Permission.locationAlways,
+      Permission.notification,
+    ].request();
   }
 
   Future<void> _bootstrapAutoTracking() async {
@@ -114,12 +126,23 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
             lat: current.latitude,
             lng: current.longitude,
             speed: current.speed,
+            accuracy: current.accuracy,
+            battery: -1,
+            network: 'unknown',
+            sessionStartedAt: DateTime.now().millisecondsSinceEpoch,
           );
         }
       }
     } catch (_) {}
 
-    await _startTracking();
+    final shouldAutoStart = await _isTrackingEnabled();
+    if (shouldAutoStart) {
+      await _startTracking();
+    } else {
+      setState(() {
+        _status = 'Tracking paused';
+      });
+    }
   }
 
   Future<void> _loadAssignments() async {
@@ -157,6 +180,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     _positionSub?.cancel();
     _activitySub?.cancel();
     _startPositionPushed = false;
+    _sessionStartedAt = DateTime.now().millisecondsSinceEpoch;
 
     await _adaptiveLocation.startTracking();
 
@@ -193,6 +217,10 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
           lat: position.latitude,
           lng: position.longitude,
           speed: position.speed,
+          accuracy: position.accuracy,
+          battery: -1,
+          network: 'unknown',
+          sessionStartedAt: _sessionStartedAt,
         );
         if (!_startPositionPushed) {
           await _pushStartPositionToAdmin(position);
@@ -206,17 +234,86 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
       _tracking = true;
       _status = 'Tracking started';
     });
+    _startHeartbeatPublishing();
+    await _setTrackingEnabled(true);
 
     if (_adminUid.isNotEmpty) {
+      try {
+        final current = await _adaptiveLocation.getCurrentLocation();
+        if (current != null) {
+          await _pushStartPositionToAdmin(current);
+        }
+      } catch (_) {}
+    }
+  }
+
+  void _startHeartbeatPublishing() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 25), (_) async {
+      if (!mounted || !_tracking || _adminUid.isEmpty) {
+        return;
+      }
+      final latest = _latest;
+      if (latest != null) {
+        await _publishToAdmin(latest);
+        return;
+      }
       try {
         final current = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
           ),
         );
-        await _pushStartPositionToAdmin(current);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _latest = current;
+        });
+        await _publishToAdmin(current);
       } catch (_) {}
+    });
+  }
+
+  Future<void> _publishToAdmin(Position position) async {
+    if (_sessionStartedAt == 0) {
+      _sessionStartedAt = DateTime.now().millisecondsSinceEpoch;
     }
+    final vitals = await _getClientVitals();
+    await _rbac.publishClientLocation(
+      adminUid: _adminUid,
+      clientUid: _clientUid,
+      lat: position.latitude,
+      lng: position.longitude,
+      speed: position.speed,
+      accuracy: position.accuracy,
+      battery: vitals.battery,
+      network: vitals.network,
+      sessionStartedAt: _sessionStartedAt,
+    );
+  }
+
+  Future<_ClientVitals> _getClientVitals() async {
+    int battery = -1;
+    String network = 'unknown';
+    try {
+      battery = await _battery.batteryLevel;
+    } catch (_) {}
+    try {
+      final connectivity = await Connectivity().checkConnectivity();
+      if (connectivity.any((c) => c == ConnectivityResult.mobile)) {
+        network = 'mobile';
+      } else if (connectivity.any((c) => c == ConnectivityResult.wifi)) {
+        network = 'wifi';
+      } else if (connectivity.any((c) => c == ConnectivityResult.ethernet)) {
+        network = 'ethernet';
+      } else if (connectivity.any((c) => c == ConnectivityResult.bluetooth)) {
+        network = 'bluetooth';
+      } else if (connectivity.any((c) => c == ConnectivityResult.none)) {
+        network = 'offline';
+      }
+    } catch (_) {}
+    return _ClientVitals(battery: battery, network: network);
   }
 
   Future<void> _pushStartPositionToAdmin(Position position) async {
@@ -410,6 +507,9 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     final wasTracking = _tracking || _positionSub != null;
     await _positionSub?.cancel();
     _positionSub = null;
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+    await _setTrackingEnabled(false);
 
     if (wasTracking && _adminUid.isNotEmpty) {
       final user = _rbac.currentUser;
@@ -428,6 +528,7 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
         lat: lat,
         lng: lng,
       );
+      await _rbac.setClientOffline(adminUid: _adminUid, clientUid: _clientUid);
     }
 
     _startPositionPushed = false;
@@ -435,6 +536,16 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
       _tracking = false;
       _status = 'Tracking stopped';
     });
+  }
+
+  Future<bool> _isTrackingEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('tracking_enabled') ?? false;
+  }
+
+  Future<void> _setTrackingEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('tracking_enabled', enabled);
   }
 
   @override
@@ -630,4 +741,11 @@ class _ClientLifecycleObserver extends WidgetsBindingObserver {
       TrackingRepository.instance.syncPending();
     }
   }
+}
+
+class _ClientVitals {
+  const _ClientVitals({required this.battery, required this.network});
+
+  final int battery;
+  final String network;
 }

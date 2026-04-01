@@ -15,6 +15,32 @@ class _MapTrackingScreenState extends State<MapTrackingScreen> {
   final RbacRepository _rbac = RbacRepository.instance;
   String _adminUid = '';
 
+  int? _extractLastSeen(Map<String, dynamic>? row) {
+    if (row == null) {
+      return null;
+    }
+    return (row['lastSeen'] as num?)?.toInt() ??
+        (row['timestamp'] as num?)?.toInt() ??
+        (row['clientTimestamp'] as num?)?.toInt();
+  }
+
+  bool _isActiveDevice(
+    Map<String, dynamic>? status,
+    Map<String, dynamic>? latest,
+  ) {
+    if (status?['online'] == true) {
+      return true;
+    }
+    final ts = _extractLastSeen(status) ?? _extractLastSeen(latest);
+    if (ts == null) {
+      return false;
+    }
+    return DateTime.now()
+            .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+            .inMinutes <=
+        2;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,88 +66,103 @@ class _MapTrackingScreenState extends State<MapTrackingScreen> {
             builder: (context, latestSnap) {
               final latestByClient =
                   latestSnap.data ?? const <String, Map<String, dynamic>>{};
-              return StreamBuilder<List<ManagedBoundary>>(
-                stream: _rbac.watchBoundaries(_adminUid),
-                builder: (context, boundarySnap) {
-                  final boundaries =
-                      boundarySnap.data ?? const <ManagedBoundary>[];
+              return StreamBuilder<Map<String, Map<String, dynamic>>>(
+                stream: _rbac.watchClientStatusByClient(_adminUid),
+                builder: (context, statusSnap) {
+                  final statusByClient =
+                      statusSnap.data ?? const <String, Map<String, dynamic>>{};
+                  return StreamBuilder<List<ManagedBoundary>>(
+                    stream: _rbac.watchBoundaries(_adminUid),
+                    builder: (context, boundarySnap) {
+                      final boundaries =
+                          boundarySnap.data ?? const <ManagedBoundary>[];
 
-                  final markers = <Marker>{};
-                  for (final device in devices) {
-                    final latest = latestByClient[device.clientUid];
-                    final lat = (latest?['lat'] as num?)?.toDouble();
-                    final lng = (latest?['lng'] as num?)?.toDouble();
-                    if (lat == null || lng == null) {
-                      continue;
-                    }
-                    markers.add(
-                      Marker(
-                        markerId: MarkerId(device.deviceId),
-                        position: LatLng(lat, lng),
-                        infoWindow: InfoWindow(
-                          title: device.label,
-                          snippet: device.clientUid,
-                        ),
-                      ),
-                    );
-                  }
+                      final markers = <Marker>{};
+                      for (final device in devices) {
+                        final latest = latestByClient[device.clientUid];
+                        final status = statusByClient[device.clientUid];
+                        if (!_isActiveDevice(status, latest)) {
+                          continue;
+                        }
+                        final lat =
+                            (status?['lat'] as num?)?.toDouble() ??
+                            (latest?['lat'] as num?)?.toDouble();
+                        final lng =
+                            (status?['lng'] as num?)?.toDouble() ??
+                            (latest?['lng'] as num?)?.toDouble();
+                        if (lat == null || lng == null) {
+                          continue;
+                        }
+                        markers.add(
+                          Marker(
+                            markerId: MarkerId(device.deviceId),
+                            position: LatLng(lat, lng),
+                            infoWindow: InfoWindow(
+                              title: device.label,
+                              snippet: device.clientUid,
+                            ),
+                          ),
+                        );
+                      }
 
-                  final polygons = <Polygon>{};
-                  for (final boundary in boundaries) {
-                    if (boundary.vertices.length < 3) {
-                      continue;
-                    }
-                    polygons.add(
-                      Polygon(
-                        polygonId: PolygonId(boundary.id),
-                        points: boundary.vertices
-                            .map((p) => LatLng(p.lat, p.lng))
-                            .toList(),
-                        strokeWidth: 3,
-                        strokeColor: boundary.isRestricted
-                            ? Colors.red
-                            : Colors.green.shade700,
-                        fillColor: boundary.isRestricted
-                            ? Colors.red.withValues(alpha: 0.15)
-                            : Colors.green.withValues(alpha: 0.15),
-                      ),
-                    );
-                  }
+                      final polygons = <Polygon>{};
+                      for (final boundary in boundaries) {
+                        if (boundary.vertices.length < 3) {
+                          continue;
+                        }
+                        polygons.add(
+                          Polygon(
+                            polygonId: PolygonId(boundary.id),
+                            points: boundary.vertices
+                                .map((p) => LatLng(p.lat, p.lng))
+                                .toList(),
+                            strokeWidth: 3,
+                            strokeColor: boundary.isRestricted
+                                ? Colors.red
+                                : Colors.green.shade700,
+                            fillColor: boundary.isRestricted
+                                ? Colors.red.withValues(alpha: 0.15)
+                                : Colors.green.withValues(alpha: 0.15),
+                          ),
+                        );
+                      }
 
-                  const fallback = LatLng(-0.6072, 30.6545);
-                  final center = markers.isNotEmpty
-                      ? markers.first.position
-                      : fallback;
+                      const fallback = LatLng(-0.6072, 30.6545);
+                      final center = markers.isNotEmpty
+                          ? markers.first.position
+                          : fallback;
 
-                  return Stack(
-                    children: [
-                      GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: center,
-                          zoom: 13,
-                        ),
-                        markers: markers,
-                        polygons: polygons,
-                        myLocationEnabled: false,
-                        zoomControlsEnabled: true,
-                      ),
-                      Positioned(
-                        left: 12,
-                        right: 12,
-                        top: 12,
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Text(
-                              'Live markers: ${markers.length} | Boundaries: ${polygons.length}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
+                      return Stack(
+                        children: [
+                          GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: center,
+                              zoom: 13,
+                            ),
+                            markers: markers,
+                            polygons: polygons,
+                            myLocationEnabled: false,
+                            zoomControlsEnabled: true,
+                          ),
+                          Positioned(
+                            left: 12,
+                            right: 12,
+                            top: 12,
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Text(
+                                  'Active markers: ${markers.length} | Boundaries: ${polygons.length}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
                 },
               );

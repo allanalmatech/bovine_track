@@ -39,6 +39,29 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
   Map<String, Map<String, dynamic>> _latestByClient = const {};
   Map<String, Map<String, dynamic>> _statusByClient = const {};
 
+  int? _extractLastSeen(Map<String, dynamic>? row) {
+    if (row == null) {
+      return null;
+    }
+    return (row['lastSeen'] as num?)?.toInt() ??
+        (row['timestamp'] as num?)?.toInt() ??
+        (row['clientTimestamp'] as num?)?.toInt();
+  }
+
+  bool _isOnline(Map<String, dynamic>? status, Map<String, dynamic>? latest) {
+    if (status?['online'] == true) {
+      return true;
+    }
+    final ts = _extractLastSeen(status) ?? _extractLastSeen(latest);
+    if (ts == null) {
+      return false;
+    }
+    return DateTime.now()
+            .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+            .inMinutes <=
+        2;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -344,14 +367,7 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
     final urgent = _alerts.length;
     final mapping = _fenceCount;
     final onlineNow = _clients.where((c) {
-      final ts = (_latestByClient[c.uid]?['timestamp'] as num?)?.toInt();
-      if (ts == null) {
-        return false;
-      }
-      return DateTime.now()
-              .difference(DateTime.fromMillisecondsSinceEpoch(ts))
-              .inMinutes <=
-          2;
+      return _isOnline(_statusByClient[c.uid], _latestByClient[c.uid]);
     }).length;
     final optimal = _clients.isEmpty
         ? 100
@@ -566,18 +582,7 @@ class _ServerDashboardScreenState extends State<ServerDashboardScreen> {
       return latest != null;
     }).length;
     final activeNow = trackedClientIds.where((clientUid) {
-      final status = _statusByClient[clientUid];
-      final latest = _latestByClient[clientUid];
-      final ts =
-          (status?['lastSeen'] as num?)?.toInt() ??
-          (latest?['timestamp'] as num?)?.toInt();
-      if (ts == null) {
-        return false;
-      }
-      return DateTime.now()
-              .difference(DateTime.fromMillisecondsSinceEpoch(ts))
-              .inMinutes <=
-          2;
+      return _isOnline(_statusByClient[clientUid], _latestByClient[clientUid]);
     }).length;
     final maintenance = (trackedClientIds.length - activeNow).clamp(0, 999);
 

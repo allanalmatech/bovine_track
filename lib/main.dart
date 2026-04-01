@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'firebase_options.dart';
+import 'services/local_notification_service.dart';
 import 'screens/auth_gate_screen.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
@@ -22,6 +23,13 @@ import 'screens/fences_screen.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final notification = message.notification;
+  if (notification != null) {
+    await LocalNotificationService.instance.showImmediateAlert(
+      title: notification.title ?? 'BovineTrack Alert',
+      body: notification.body ?? 'Boundary update received',
+    );
+  }
 }
 
 Future<void> main() async {
@@ -32,6 +40,16 @@ Future<void> main() async {
     );
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance.requestPermission();
+    FirebaseMessaging.onMessage.listen((message) async {
+      final notification = message.notification;
+      if (notification == null) {
+        return;
+      }
+      await LocalNotificationService.instance.showImmediateAlert(
+        title: notification.title ?? 'BovineTrack Alert',
+        body: notification.body ?? 'Boundary update received',
+      );
+    });
   } catch (_) {
     // App remains usable offline/local even if Firebase config is not finalized yet.
   }

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bovinetrack.app.R;
 import com.bovinetrack.app.data.DevicePreferences;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override
@@ -20,14 +21,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         EditText deviceIdInput = findViewById(R.id.deviceIdInput);
         EditText firebaseUrlInput = findViewById(R.id.firebasePathInput);
+        SwitchMaterial accessibilitySwitch = findViewById(R.id.accessibilityModeSwitch);
         MaterialButton saveButton = findViewById(R.id.saveSettingsButton);
 
         deviceIdInput.setText(prefs.getDeviceId());
         firebaseUrlInput.setText(prefs.getFirebaseUrl());
+        accessibilitySwitch.setChecked(prefs.isAccessibilityModeEnabled());
 
         saveButton.setOnClickListener(v -> {
             prefs.setDeviceId(deviceIdInput.getText().toString());
             prefs.setFirebaseUrl(firebaseUrlInput.getText().toString());
+            prefs.setAccessibilityModeEnabled(accessibilitySwitch.isChecked());
             Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
             finish();
         });
