@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import '../models/rbac_models.dart';
 import '../services/rbac_repository.dart';
 
@@ -25,9 +24,8 @@ class FarmDetailsScreen extends StatelessWidget {
         builder: (context, boundariesSnap) {
           final allBoundaries =
               boundariesSnap.data ?? const <ManagedBoundary>[];
-          final farmBoundaries = allBoundaries
-              .where((b) => b.farmId == farm.id)
-              .toList();
+          final farmBoundaries =
+              allBoundaries.where((b) => b.farmId == farm.id).toList();
 
           final assignedClientIds = <String>{};
           for (final boundary in farmBoundaries) {
@@ -37,16 +35,18 @@ class FarmDetailsScreen extends StatelessWidget {
           return StreamBuilder<List<ManagedClient>>(
             stream: rbac.watchAdminClients(adminUid),
             builder: (context, clientsSnap) {
-              final clients = (clientsSnap.data ?? const <ManagedClient>[])
-                  .where((c) => assignedClientIds.contains(c.uid))
-                  .toList();
+              final clients =
+                  (clientsSnap.data ?? const <ManagedClient>[])
+                      .where((c) => assignedClientIds.contains(c.uid))
+                      .toList();
 
               return StreamBuilder<List<TrackedDevice>>(
                 stream: rbac.watchAdminDevices(adminUid),
                 builder: (context, devicesSnap) {
-                  final devices = (devicesSnap.data ?? const <TrackedDevice>[])
-                      .where((d) => assignedClientIds.contains(d.clientUid))
-                      .toList();
+                  final devices =
+                      (devicesSnap.data ?? const <TrackedDevice>[])
+                          .where((d) => assignedClientIds.contains(d.clientUid))
+                          .toList();
 
                   return StreamBuilder<Map<String, Map<String, dynamic>>>(
                     stream: rbac.watchLatestLocationsByClient(adminUid),
@@ -63,18 +63,19 @@ class FarmDetailsScreen extends StatelessWidget {
                         polygons.add(
                           Polygon(
                             polygonId: PolygonId(boundary.id),
-                            points: boundary.vertices
-                                .map((p) => LatLng(p.lat, p.lng))
-                                .toList(),
+                            points:
+                                boundary.vertices
+                                    .map((p) => LatLng(p.lat, p.lng))
+                                    .toList(),
                             strokeWidth: 3,
-                            strokeColor: boundary.isRestricted
-                                ? Colors.red
-                                : Colors.green,
-                            fillColor:
-                                (boundary.isRestricted
-                                        ? Colors.red
-                                        : Colors.green)
-                                    .withValues(alpha: 0.16),
+                            strokeColor:
+                                boundary.isRestricted
+                                    ? Colors.red
+                                    : Colors.green,
+                            fillColor: (boundary.isRestricted
+                                    ? Colors.red
+                                    : Colors.green)
+                                .withValues(alpha: 0.16),
                           ),
                         );
                       }
@@ -82,6 +83,9 @@ class FarmDetailsScreen extends StatelessWidget {
                       final markers = <Marker>{};
                       for (final device in devices) {
                         final row = latest[device.clientUid];
+                        final battery = row?['battery'];
+                        final online = row?['online'];
+                        final lastSeen = row?['lastSeen'];
                         final lat = (row?['lat'] as num?)?.toDouble();
                         final lng = (row?['lng'] as num?)?.toDouble();
                         if (lat == null || lng == null) {
@@ -93,7 +97,16 @@ class FarmDetailsScreen extends StatelessWidget {
                             position: LatLng(lat, lng),
                             infoWindow: InfoWindow(
                               title: device.label,
-                              snippet: device.clientUid,
+                              snippet:
+                                  "UID: ${device.clientUid}\n"
+                                  "Battery: ${battery ?? 'N/A'}%\n"
+                                  "Status: ${online == true ? 'Online' : 'Offline'}\n"
+                                  "Last Seen: ${lastSeen != null ? "${DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSeen)).inMinutes} mins ago" : 'N/A'}",
+                            ),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                              online == true
+                                  ? BitmapDescriptor.hueGreen
+                                  : BitmapDescriptor.hueRed,
                             ),
                           ),
                         );
@@ -118,9 +131,8 @@ class FarmDetailsScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     farm.name,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -179,9 +191,10 @@ class FarmDetailsScreen extends StatelessWidget {
                                     b.isRestricted
                                         ? Icons.warning_amber
                                         : Icons.check_circle_outline,
-                                    color: b.isRestricted
-                                        ? Colors.red
-                                        : Colors.green,
+                                    color:
+                                        b.isRestricted
+                                            ? Colors.red
+                                            : Colors.green,
                                   ),
                                   title: Text(b.name),
                                   subtitle: Text(
@@ -200,9 +213,10 @@ class FarmDetailsScreen extends StatelessWidget {
                             const Text('No assigned clients for this farm yet.')
                           else
                             ...clients.map((client) {
-                              final linked = devices
-                                  .where((d) => d.clientUid == client.uid)
-                                  .toList();
+                              final linked =
+                                  devices
+                                      .where((d) => d.clientUid == client.uid)
+                                      .toList();
                               return Card(
                                 child: ListTile(
                                   leading: const Icon(Icons.person_pin_circle),
