@@ -21,7 +21,6 @@ import androidx.core.app.NotificationCompat;
 import com.bovinetrack.app.BovineTrackApp;
 import com.bovinetrack.app.R;
 import com.bovinetrack.app.data.DevicePreferences;
-import com.bovinetrack.app.data.KalmanLocationFilter;
 import com.bovinetrack.app.data.LocationRepository;
 import com.bovinetrack.app.data.local.entity.LocationEntity;
 import com.bovinetrack.app.ui.client.ClientDashboardActivity;
@@ -47,7 +46,6 @@ public class TrackingService extends Service {
     private ActivityRecognitionClient activityRecognitionClient;
     private LocationRepository repository;
     private DevicePreferences prefs;
-    private KalmanLocationFilter kalmanFilter;
     private LocationCallback callback;
     private boolean simulation;
     private final Handler simulationHandler = new Handler(Looper.getMainLooper());
@@ -62,7 +60,6 @@ public class TrackingService extends Service {
         activityRecognitionClient = ActivityRecognition.getClient(this);
         repository = LocationRepository.get(this);
         prefs = new DevicePreferences(this);
-        kalmanFilter = new KalmanLocationFilter();
     }
 
     @Override
@@ -124,9 +121,10 @@ public class TrackingService extends Service {
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
-                    Location smoothed = kalmanFilter.smooth(location);
+                    Location smoothed = repository.smoothLocation(location);
                     if (smoothed != null) {
                         persistLocation(smoothed, false);
+                        repository.persistKalmanState();
                     }
                     requestLocationUpdates();
                 }
@@ -156,17 +154,24 @@ public class TrackingService extends Service {
     }
 
     private void persistLocation(Location location, boolean isSimulated) {
+        long ts = System.currentTimeMillis();
+        if (prefs.isLocationStale(ts)) {
+            return;
+        }
+        boolean firstSinceReboot = prefs.isFirstLocationSinceReboot();
+        prefs.setLastLocationTimestamp(ts);
+
         LocationEntity entity = new LocationEntity();
         entity.deviceId = prefs.getDeviceId();
         entity.latitude = location.getLatitude();
         entity.longitude = location.getLongitude();
         entity.speed = location.getSpeed();
-        entity.timestamp = System.currentTimeMillis();
+        entity.timestamp = ts;
         entity.battery = readBatteryPercent();
         entity.simulated = isSimulated;
         entity.synced = false;
 
-        repository.saveLocation(entity);
+        repository.saveLocation(entity, firstSinceReboot);
         repository.syncMessagingToken();
         repository.syncPending();
         if (entity.battery <= 15) {

@@ -14,6 +14,13 @@ public class DevicePreferences {
     private static final String KEY_TRACKING_ENABLED = "tracking_enabled";
     private static final String KEY_ACCESSIBILITY_MODE = "accessibility_mode";
     private static final String KEY_ZONE_STATE_PREFIX = "zone_state_";
+    private static final String KEY_LAST_LOCATION_TIMESTAMP = "last_location_timestamp";
+    private static final String KEY_KALMAN_LAT_EST = "kalman_lat_est";
+    private static final String KEY_KALMAN_LAT_COV = "kalman_lat_cov";
+    private static final String KEY_KALMAN_LNG_EST = "kalman_lng_est";
+    private static final String KEY_KALMAN_LNG_COV = "kalman_lng_cov";
+    private static final String KEY_KALMAN_LAST_TS = "kalman_last_ts";
+    private static final long STALE_LOCATION_THRESHOLD_MS = 120_000L;
 
     private final SharedPreferences sharedPreferences;
 
@@ -87,5 +94,68 @@ public class DevicePreferences {
 
     private String zoneStateKey(String deviceId, long zoneId) {
         return KEY_ZONE_STATE_PREFIX + deviceId + "_" + zoneId;
+    }
+
+    public void setLastLocationTimestamp(long timestamp) {
+        sharedPreferences.edit().putLong(KEY_LAST_LOCATION_TIMESTAMP, timestamp).apply();
+    }
+
+    public long getLastLocationTimestamp() {
+        return sharedPreferences.getLong(KEY_LAST_LOCATION_TIMESTAMP, 0L);
+    }
+
+    public boolean isFirstLocationSinceReboot() {
+        return getLastLocationTimestamp() == 0L;
+    }
+
+    public boolean isLocationStale(long timestamp) {
+        if (timestamp <= 0) {
+            return true;
+        }
+        long lastTs = getLastLocationTimestamp();
+        if (lastTs == 0L) {
+            return false;
+        }
+        return (timestamp - lastTs) > STALE_LOCATION_THRESHOLD_MS;
+    }
+
+    public void saveKalmanState(double latEst, double latCov, double lngEst, double lngCov, long lastTs) {
+        sharedPreferences.edit()
+                .putLong(KEY_KALMAN_LAST_TS, lastTs)
+                .putFloat(KEY_KALMAN_LAT_EST, (float) latEst)
+                .putFloat(KEY_KALMAN_LAT_COV, (float) latCov)
+                .putFloat(KEY_KALMAN_LNG_EST, (float) lngEst)
+                .putFloat(KEY_KALMAN_LNG_COV, (float) lngCov)
+                .apply();
+    }
+
+    public KalmanState loadKalmanState() {
+        long lastTs = sharedPreferences.getLong(KEY_KALMAN_LAST_TS, 0L);
+        if (lastTs == 0L) {
+            return new KalmanState(false, 0, 0, 0, 0, 0);
+        }
+        return new KalmanState(true,
+                sharedPreferences.getFloat(KEY_KALMAN_LAT_EST, 0f),
+                sharedPreferences.getFloat(KEY_KALMAN_LAT_COV, 1f),
+                sharedPreferences.getFloat(KEY_KALMAN_LNG_EST, 0f),
+                sharedPreferences.getFloat(KEY_KALMAN_LNG_COV, 1f),
+                lastTs);
+    }
+
+    public static class KalmanState {
+        public final boolean initialized;
+        public final double latEstimate, latCovariance;
+        public final double lngEstimate, lngCovariance;
+        public final long lastTimestamp;
+
+        public KalmanState(boolean initialized, double latEstimate, double latCovariance,
+                           double lngEstimate, double lngCovariance, long lastTimestamp) {
+            this.initialized = initialized;
+            this.latEstimate = latEstimate;
+            this.latCovariance = latCovariance;
+            this.lngEstimate = lngEstimate;
+            this.lngCovariance = lngCovariance;
+            this.lastTimestamp = lastTimestamp;
+        }
     }
 }

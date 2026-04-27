@@ -8,6 +8,8 @@ import com.bovinetrack.app.data.local.AppDatabase;
 import com.bovinetrack.app.data.local.entity.AlertEntity;
 import com.bovinetrack.app.data.local.entity.GeofenceZoneEntity;
 import com.bovinetrack.app.data.local.entity.LocationEntity;
+import com.bovinetrack.app.data.PolygonValidator;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,12 +27,15 @@ public class LocationRepository {
     private final DevicePreferences preferences;
     private final WearSyncClient wearSyncClient;
     private final ExecutorService io;
+    private final KalmanLocationFilter kalmanFilter;
 
     private LocationRepository(Context context) {
         db = AppDatabase.get(context);
         preferences = new DevicePreferences(context);
         wearSyncClient = new WearSyncClient(context);
         io = Executors.newSingleThreadExecutor();
+        kalmanFilter = new KalmanLocationFilter();
+        kalmanFilter.restoreFromState(preferences.loadKalmanState());
     }
 
     public static LocationRepository get(Context context) {
@@ -42,6 +47,16 @@ public class LocationRepository {
             }
         }
         return instance;
+    }
+
+    public synchronized Location smoothLocation(android.location.Location raw) {
+        return kalmanFilter.smooth(raw);
+    }
+
+    public synchronized void persistKalmanState() {
+        double[] lat = kalmanFilter.getLatState();
+        double[] lng = kalmanFilter.getLngState();
+        preferences.saveKalmanState(lat[0], lat[1], lng[0], lng[1], kalmanFilter.getLastTimestamp());
     }
 
     public LiveData<LocationEntity> observeLatestSelf() {
@@ -69,10 +84,56 @@ public class LocationRepository {
     }
 
     public void saveZone(GeofenceZoneEntity zone) {
-        io.execute(() -> db.zoneDao().insert(zone));
+        saveZone(zone, null);
+    }
+
+    public void saveZone(GeofenceZoneEntity zone, ZoneSaveCallback callback) {
+        if (zone.polygon && zone.polygonPoints != null && !zone.polygonPoints.isEmpty()) {
+            List<LatLng> points = parsePolygonPoints(zone.polygonPoints);
+            if (points.size() < 3) {
+                if (callback != null) callback.onError("Polygon requires at least 3 valid points");
+                return;
+            }
+            if (PolygonValidator.isSelfIntersecting(points)) {
+                if (callback != null) callback.onError("Polygon edges intersect");
+                return;
+            }
+            if (!PolygonValidator.hasValidArea(points)) {
+                if (callback != null) callback.onError("Polygon area too small (min 100 sq meters)");
+                return;
+            }
+        }
+        io.execute(() -> {
+            db.zoneDao().insert(zone);
+            if (callback != null) callback.onSuccess();
+        });
+    }
+
+    public interface ZoneSaveCallback {
+        void onSuccess();
+        void onError(String reason);
+    }
+
+    private static List<LatLng> parsePolygonPoints(String raw) {
+        List<LatLng> out = new java.util.ArrayList<>();
+        String[] pairs = raw.split(";");
+        for (String pair : pairs) {
+            String[] parts = pair.trim().split(",");
+            if (parts.length == 2) {
+                try {
+                    out.add(new LatLng(Double.parseDouble(parts[0].trim()), Double.parseDouble(parts[1].trim())));
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return out;
     }
 
     public void saveLocation(LocationEntity location) {
+        saveLocation(location, false);
+    }
+
+    public void saveLocation(LocationEntity location, boolean isFirstSinceReboot) {
         io.execute(() -> {
             long id = db.locationDao().insert(location);
             maybeSyncLocation(location, id);
@@ -96,6 +157,9 @@ public class LocationRepository {
                 preferences.setLastZoneInsideState(location.deviceId, entry.getKey(), entry.getValue());
             }
             for (String violation : evaluation.alerts) {
+                if (isFirstSinceReboot) {
+                    continue;
+                }
                 AlertEntity alert = new AlertEntity();
                 alert.deviceId = location.deviceId;
                 alert.type = "GEOFENCE";

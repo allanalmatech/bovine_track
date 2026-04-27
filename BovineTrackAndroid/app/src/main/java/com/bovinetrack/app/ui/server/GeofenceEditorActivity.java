@@ -85,6 +85,10 @@ public class GeofenceEditorActivity extends AppCompatActivity implements OnMapRe
                         Toast.makeText(this, "Invalid polygon: edges intersect", Toast.LENGTH_LONG).show();
                         return;
                     }
+                    if (!PolygonValidator.hasValidArea(points)) {
+                        Toast.makeText(this, "Polygon area too small (min 100 sq meters)", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
                 zone.polygonPoints = polygonPoints;
                 zone.restricted = restrictedCheck.isChecked();

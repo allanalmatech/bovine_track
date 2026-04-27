@@ -5,6 +5,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 public class PolygonValidator {
+    private static final double MIN_AREA_SQ_METERS = 100.0;
+
     public static boolean isSelfIntersecting(List<LatLng> points) {
         if (points == null || points.size() < 4) {
             return false;
@@ -65,5 +67,29 @@ public class PolygonValidator {
                 && q.latitude >= Math.min(p.latitude, r.latitude)
                 && q.longitude <= Math.max(p.longitude, r.longitude)
                 && q.longitude >= Math.min(p.longitude, r.longitude);
+    }
+
+    public static double calculateAreaSqMeters(List<LatLng> points) {
+        if (points == null || points.size() < 3) {
+            return 0.0;
+        }
+        double sum = 0.0;
+        int n = points.size();
+        for (int i = 0; i < n; i++) {
+            LatLng curr = points.get(i);
+            LatLng next = points.get((i + 1) % n);
+            sum += curr.longitude * next.latitude - next.longitude * curr.latitude;
+        }
+        double absAreaDeg2 = Math.abs(sum) / 2.0;
+        double avgLat = 0.0;
+        for (LatLng p : points) {
+            avgLat += p.latitude;
+        }
+        avgLat /= n;
+        return absAreaDeg2 * 111320.0 * 111320.0 * Math.cos(Math.toRadians(avgLat));
+    }
+
+    public static boolean hasValidArea(List<LatLng> points) {
+        return calculateAreaSqMeters(points) >= MIN_AREA_SQ_METERS;
     }
 }
