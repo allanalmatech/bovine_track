@@ -13,6 +13,7 @@ import '../models/alert_model.dart';
 import '../models/geofence_model.dart';
 import '../models/location_point_model.dart';
 import '../models/rbac_models.dart';
+import '../services/adaptive_location_service.dart';
 import '../services/geofence_service.dart';
 import '../services/local_notification_service.dart';
 import '../services/rbac_repository.dart';
@@ -28,8 +29,10 @@ class ClientTrackingScreen extends StatefulWidget {
 class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   final TrackingRepository _repo = TrackingRepository.instance;
   final RbacRepository _rbac = RbacRepository.instance;
+  final AdaptiveLocationService _adaptiveLocation = AdaptiveLocationService();
   final Battery _battery = Battery();
   StreamSubscription<Position>? _positionSub;
+  StreamSubscription<ActivityState>? _activitySub;
   Position? _latest;
   bool _tracking = false;
   String _status = 'Idle';
@@ -65,6 +68,8 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
   void dispose() {
     WidgetsBinding.instance.removeObserver(_lifecycleObserver);
     _positionSub?.cancel();
+    _activitySub?.cancel();
+    _adaptiveLocation.stopTracking();
     _assignmentRefreshTimer?.cancel();
     _heartbeatTimer?.cancel();
     _breachBlinkTimer?.cancel();
@@ -102,23 +107,31 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     }
 
     try {
-      final current = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
-      final currentPoint = LatLng(current.latitude, current.longitude);
-      setState(() {
-        _latest = current;
-        _routePoints.add(currentPoint);
-      });
-      await _mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: currentPoint, zoom: 16),
-        ),
-      );
-      if (_adminUid.isNotEmpty) {
-        await _publishToAdmin(current);
+      final current = await _adaptiveLocation.getCurrentLocation();
+      if (current != null) {
+        final currentPoint = LatLng(current.latitude, current.longitude);
+        setState(() {
+          _latest = current;
+          _routePoints.add(currentPoint);
+        });
+        await _mapController?.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: currentPoint, zoom: 16),
+          ),
+        );
+        if (_adminUid.isNotEmpty) {
+          await _rbac.publishClientLocation(
+            adminUid: _adminUid,
+            clientUid: _clientUid,
+            lat: current.latitude,
+            lng: current.longitude,
+            speed: current.speed,
+            accuracy: current.accuracy,
+            battery: -1,
+            network: 'unknown',
+            sessionStartedAt: DateTime.now().millisecondsSinceEpoch,
+          );
+        }
       }
     } catch (_) {}
 
@@ -165,68 +178,57 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
     }
 
     _positionSub?.cancel();
+    _activitySub?.cancel();
     _startPositionPushed = false;
     _sessionStartedAt = DateTime.now().millisecondsSinceEpoch;
-    _positionSub =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 10,
-          ),
-        ).listen((position) async {
-          final currentPoint = LatLng(position.latitude, position.longitude);
-          setState(() {
-            _latest = position;
-            _status = 'Tracking and syncing';
-            _routePoints.add(currentPoint);
-          });
 
-          await _mapController?.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(target: currentPoint, zoom: 16),
-            ),
-          );
+    await _adaptiveLocation.startTracking();
 
-          final now = DateTime.now();
-          final moving = position.speed > 1.0;
-          final persistInterval = moving
-              ? const Duration(seconds: 10)
-              : const Duration(seconds: 45);
-          final publishInterval = moving
-              ? const Duration(seconds: 8)
-              : const Duration(seconds: 25);
+    _positionSub = _adaptiveLocation.locationStream.listen((position) async {
+      final currentPoint = LatLng(position.latitude, position.longitude);
+      final activity = _adaptiveLocation.currentActivityState;
+      setState(() {
+        _latest = position;
+        _status = 'Tracking (${activity.name}) and syncing';
+        _routePoints.add(currentPoint);
+      });
 
-          final shouldPersist =
-              now.difference(_lastPersistedAt) >= persistInterval;
-          if (shouldPersist) {
-            _lastPersistedAt = now;
-            await _repo.saveLocation(
-              LocationPointModel(
-                id: null,
-                deviceId: _clientUid,
-                lat: position.latitude,
-                lng: position.longitude,
-                speed: position.speed,
-                recordedAt: now,
-                synced: false,
-              ),
-            );
-            await _repo.syncPending();
-          }
+      await _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: currentPoint, zoom: 16),
+        ),
+      );
 
-          if (_adminUid.isNotEmpty) {
-            final shouldPublish =
-                now.difference(_lastPublishedAt) >= publishInterval;
-            if (shouldPublish) {
-              _lastPublishedAt = now;
-              await _publishToAdmin(position);
-            }
-            if (!_startPositionPushed) {
-              await _pushStartPositionToAdmin(position);
-            }
-            await _evaluateBoundaryAndAlert(position);
-          }
-        });
+      await _repo.saveLocation(
+        LocationPointModel(
+          id: null,
+          deviceId: _clientUid,
+          lat: position.latitude,
+          lng: position.longitude,
+          speed: position.speed,
+          recordedAt: DateTime.now(),
+          synced: false,
+        ),
+      );
+      if (_adminUid.isNotEmpty) {
+        await _rbac.publishClientLocation(
+          adminUid: _adminUid,
+          clientUid: _clientUid,
+          lat: position.latitude,
+          lng: position.longitude,
+          speed: position.speed,
+          accuracy: position.accuracy,
+          battery: -1,
+          network: 'unknown',
+          sessionStartedAt: _sessionStartedAt,
+        );
+        if (!_startPositionPushed) {
+          await _pushStartPositionToAdmin(position);
+        }
+        await _evaluateBoundaryAndAlert(position);
+      }
+      await _repo.syncPending();
+    });
 
     setState(() {
       _tracking = true;
@@ -237,12 +239,10 @@ class _ClientTrackingScreenState extends State<ClientTrackingScreen> {
 
     if (_adminUid.isNotEmpty) {
       try {
-        final current = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        );
-        await _pushStartPositionToAdmin(current);
+        final current = await _adaptiveLocation.getCurrentLocation();
+        if (current != null) {
+          await _pushStartPositionToAdmin(current);
+        }
       } catch (_) {}
     }
   }
